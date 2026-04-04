@@ -21,9 +21,17 @@ The application starts with no workers running by default.
 ./mvnw spring-boot:run
 ```
 
+## Metrics
+
+The application includes Spring Boot Actuator and Micrometer with a Prometheus registry.
+
+Metrics are available at [http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus)
+
 ### Running with the Hello World Sample
 
-Start the application with the `workflow-hello` profile to register a worker and automatically execute a sample `HelloWorldWorkflow` on startup.
+Start the application with the `workflow-hello` profile to discover workflows and activities in `io.temporal.workflow.hello` and register a worker
+and automatically execute the workflow on startup.
+
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=workflow-hello
@@ -33,11 +41,22 @@ You can observe the execution in the [Temporal Web UI](http://localhost:8233).
 
 See [application-workflow-hello.yml](src/main/resources/application-workflow-hello.yml) for worker configuration.
 
-## Metrics
+### Running with the Interval Sample
 
-The application includes Spring Boot Actuator and Micrometer with a Prometheus registry.
+Start the application with the `workflow-interceptor-metric` profile to discover workflows and activities in `io.temporal.workflow.interceptor` and register a worker 
+and automatically execute the workflow on startup.
 
-Metrics are available at [http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus)
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=workflow-interceptor-metric
+```
+
+Query the metrics to see the activity retry count:
+
+```bash
+curl -s http://localhost:3030/actuator/prometheus | grep '^activity_retry'
+```
+
+
 
 ## Running Tests
 
