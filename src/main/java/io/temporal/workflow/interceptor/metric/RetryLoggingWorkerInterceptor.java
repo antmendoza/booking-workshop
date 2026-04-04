@@ -1,4 +1,4 @@
-package io.temporal.workflow.interceptor;
+package io.temporal.workflow.interceptor.metric;
 
 import io.nexusrpc.handler.OperationContext;
 import io.temporal.common.interceptors.ActivityInboundCallsInterceptor;

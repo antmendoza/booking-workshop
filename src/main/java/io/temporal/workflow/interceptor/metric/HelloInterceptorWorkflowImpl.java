@@ -1,4 +1,4 @@
-package io.temporal.workflow.interceptor;
+package io.temporal.workflow.interceptor.metric;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
