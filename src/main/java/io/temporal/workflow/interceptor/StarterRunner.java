@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(value = "interceptor-log")
+@Profile(value = "workflow-interceptor-metric")
 public class StarterRunner implements ApplicationRunner {
 
 
