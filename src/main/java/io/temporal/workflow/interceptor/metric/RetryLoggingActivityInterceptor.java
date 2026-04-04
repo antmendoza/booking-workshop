@@ -1,4 +1,4 @@
-package io.temporal.workflow.interceptor;
+package io.temporal.workflow.interceptor.metric;
 
 import com.uber.m3.tally.Scope;
 import io.temporal.activity.ActivityExecutionContext;
