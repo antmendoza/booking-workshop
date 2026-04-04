@@ -9,7 +9,7 @@ import java.time.Duration;
 
 
 @WorkflowImpl(taskQueues = "HelloSampleTaskQueue")
-@Profile(value = "workflow-hello")
+@Profile(value = "hello")
 public class HelloWorldWorkflowImpl implements HelloWorldWorkflow {
 
     private final HelloActivity helloActivity = Workflow.newActivityStub(
