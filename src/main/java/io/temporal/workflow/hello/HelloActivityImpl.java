@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ActivityImpl(taskQueues = "HelloSampleTaskQueue")
-@Profile(value = "workflow-hello")
+@Profile(value = "hello")
 public class HelloActivityImpl implements HelloActivity {
 
     private static final Logger log = LoggerFactory.getLogger(HelloActivityImpl.class);

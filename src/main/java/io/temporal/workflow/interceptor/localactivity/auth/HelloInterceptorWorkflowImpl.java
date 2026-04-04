@@ -1,4 +1,4 @@
-package io.temporal.workflow.interceptor.metric;
+package io.temporal.workflow.interceptor.localactivity.auth;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.common.RetryOptions;
@@ -10,7 +10,7 @@ import java.time.Duration;
 
 
 @WorkflowImpl(taskQueues = "HelloSampleInterceptor")
-@Profile(value = "interceptor-metric")
+@Profile(value = "interceptor-localactivity-auth")
 public class HelloInterceptorWorkflowImpl implements HelloInterceptorWorkflow {
 
     private final HelloActivityInterceptor helloActivity = Workflow.newActivityStub(

@@ -1,4 +1,4 @@
-package io.temporal.workflow.interceptor.metric;
+package io.temporal.workflow.interceptor.localactivity.auth;
 
 import io.nexusrpc.handler.OperationContext;
 import io.temporal.common.interceptors.ActivityInboundCallsInterceptor;
@@ -9,17 +9,17 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(value = "interceptor-metric")
-public class RetryLoggingWorkerInterceptor implements WorkerInterceptor {
+@Profile(value = "interceptor-localactivity-auth")
+public class ActivityAuthWorkerInterceptor implements WorkerInterceptor {
 
     @Override
     public WorkflowInboundCallsInterceptor interceptWorkflow(WorkflowInboundCallsInterceptor next) {
-        return next;
+        return new ActivityAuthInboundInterceptor(next);
     }
 
     @Override
     public ActivityInboundCallsInterceptor interceptActivity(ActivityInboundCallsInterceptor next) {
-        return new RetryLoggingActivityInterceptor(next);
+        return next;
     }
 
     @Override
