@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Profile;
 import java.time.Duration;
 
 
-@WorkflowImpl(taskQueues = "HelloSampleInterceptor")
 @Profile(value = "interceptor-metric")
+@WorkflowImpl(taskQueues = "HelloSampleInterceptor")
 public class HelloInterceptorWorkflowImpl implements HelloInterceptorWorkflow {
 
     private final HelloActivityInterceptor helloActivity = Workflow.newActivityStub(
