@@ -6,6 +6,11 @@ import io.temporal.activity.ActivityMethod;
 @ActivityInterface
 public interface HelloActivityInterceptor {
 
-    @ActivityMethod
-    String greet(String name);
+    String one(String name);
+
+    String two(String name);
+
+    String three(String name);
+
+    String regenerateAuthToken();
 }

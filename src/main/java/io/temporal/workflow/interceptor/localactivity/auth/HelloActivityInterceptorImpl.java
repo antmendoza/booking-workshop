@@ -1,18 +1,49 @@
 package io.temporal.workflow.interceptor.localactivity.auth;
 
 import io.temporal.activity.Activity;
+import io.temporal.failure.ApplicationFailure;
 import io.temporal.spring.boot.ActivityImpl;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
 @Profile(value = "interceptor-localactivity-auth")
-@ActivityImpl(taskQueues = "HelloSampleInterceptor")
+@ActivityImpl(taskQueues = "HelloInterceptorLocalactivityAuth")
 public class HelloActivityInterceptorImpl implements HelloActivityInterceptor {
 
 
     @Override
-    public String greet(String name) {
+    public String one(String name) {
+
+        anyHttpRequests();
         return "Hello, " + name + "!";
+    }
+
+    @Override
+    public String two(String name) {
+
+        anyHttpRequests();
+        return "Hello, " + name + "!";
+    }
+
+    @Override
+    public String three(String name) {
+
+        anyHttpRequests();
+        return "Hello, " + name + "!";
+    }
+
+    @Override
+    public String regenerateAuthToken() {
+        return "new-valid-token";
+    }
+
+    private void anyHttpRequests() {
+        //simulate token expiration
+        String token = MDC.get("x-auth-jwt-token");
+        if(token.equals("expired-token")) {
+            throw ApplicationFailure.newNonRetryableFailure("Token is expired", "TokenExpired");
+        }
     }
 }

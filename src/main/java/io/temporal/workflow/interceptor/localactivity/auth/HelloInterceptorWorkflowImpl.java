@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Profile;
 import java.time.Duration;
 
 
-@WorkflowImpl(taskQueues = "HelloSampleInterceptor")
 @Profile(value = "interceptor-localactivity-auth")
+@WorkflowImpl(taskQueues = "HelloInterceptorLocalactivityAuth")
 public class HelloInterceptorWorkflowImpl implements HelloInterceptorWorkflow {
 
     private final HelloActivityInterceptor helloActivity = Workflow.newActivityStub(
@@ -25,6 +25,12 @@ public class HelloInterceptorWorkflowImpl implements HelloInterceptorWorkflow {
 
     @Override
     public String sayHello(String name) {
-        return helloActivity.greet(name);
+        String greet = helloActivity.one(name);
+
+        helloActivity.two(name);
+
+        helloActivity.three(name);
+
+        return greet;
     }
 }

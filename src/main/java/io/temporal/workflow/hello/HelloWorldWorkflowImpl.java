@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Profile;
 import java.time.Duration;
 
 
-@WorkflowImpl(taskQueues = "HelloSampleTaskQueue")
 @Profile(value = "hello")
+@WorkflowImpl(taskQueues = "HelloSampleTaskQueue")
 public class HelloWorldWorkflowImpl implements HelloWorldWorkflow {
 
     private final HelloActivity helloActivity = Workflow.newActivityStub(
