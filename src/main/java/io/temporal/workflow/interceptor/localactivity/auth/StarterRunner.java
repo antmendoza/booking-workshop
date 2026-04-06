@@ -20,13 +20,9 @@ public class StarterRunner implements ApplicationRunner {
     private static final String TASK_QUEUE = "HelloInterceptorLocalactivityAuth";
 
     private final WorkflowClient workflowClient;
-  //  private final MDCContextPropagator mdcContextPropagator;
 
-    public StarterRunner(WorkflowClient workflowClient
-    //                     MDCContextPropagator mdcContextPropagator
-    ) {
+    public StarterRunner(WorkflowClient workflowClient) {
         this.workflowClient = workflowClient;
-      //  this.mdcContextPropagator = mdcContextPropagator;
     }
 
     @Override

@@ -11,13 +11,6 @@ import java.util.Collections;
 @Configuration
 public class TemporalOptionsConfig {
 
-
-   // @Bean
-    public MDCContextPropagator mdcContextPropagator() {
-        return new MDCContextPropagator();
-    }
-
-    // WorkflowClientOption customization
     @Bean
     public TemporalOptionsCustomizer<WorkflowClientOptions.Builder> customClientOptions() {
         return optionsBuilder -> {
