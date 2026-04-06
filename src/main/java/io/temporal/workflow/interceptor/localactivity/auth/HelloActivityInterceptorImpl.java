@@ -16,21 +16,21 @@ public class HelloActivityInterceptorImpl implements HelloActivityInterceptor {
     @Override
     public String one(String name) {
 
-        anyHttpRequests();
+        anyHttpRequest();
         return "Hello, " + name + "!";
     }
 
     @Override
     public String two(String name) {
 
-        anyHttpRequests();
+        anyHttpRequest();
         return "Hello, " + name + "!";
     }
 
     @Override
     public String three(String name) {
 
-        anyHttpRequests();
+        anyHttpRequest();
         return "Hello, " + name + "!";
     }
 
@@ -39,7 +39,7 @@ public class HelloActivityInterceptorImpl implements HelloActivityInterceptor {
         return "new-valid-token";
     }
 
-    private void anyHttpRequests() {
+    private void anyHttpRequest() {
         //simulate token expiration
         String token = MDC.get("x-auth-jwt-token");
         if(token.equals("expired-token")) {
