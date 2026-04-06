@@ -1,6 +1,5 @@
 package io.temporal.workflow.interceptor.localactivity.auth;
 
-import io.temporal.activity.Activity;
 import io.temporal.failure.ApplicationFailure;
 import io.temporal.spring.boot.ActivityImpl;
 import org.slf4j.MDC;
@@ -40,7 +39,7 @@ public class HelloActivityInterceptorImpl implements HelloActivityInterceptor {
     }
 
     private void anyHttpRequest() {
-        //simulate token expiration
+        //simulate a http request
         String token = MDC.get("x-auth-jwt-token");
         if(token.equals("expired-token")) {
             throw ApplicationFailure.newNonRetryableFailure("Token is expired", "TokenExpired");
