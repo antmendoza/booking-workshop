@@ -43,7 +43,7 @@ See [application-workflow-hello.yml](src/main/resources/application-workflow-hel
 
 ### Running with the Interceptor Metric Sample
 
-Start the application with the `interceptor-metric` profile to discover workflows and activities in `io.temporal.workflow.interceptor.metric` and register a worker 
+Start the application with the `interceptor-metric` profile to discover workflows and activities in `io.temporal.workflow.interceptor.metric` and register a worker
 and automatically execute the workflow on startup.
 
 ```bash
@@ -62,6 +62,7 @@ activity_retry_total{activity_type="Greet",...,workflow_run_id="019d5920-4e44-76
 
 ```
 
+For a detailed see the [Interceptor Metric README](src/main/java/io/temporal/workflow/interceptor/metric/README.md).
 
 ### Running with the Interceptor with Local Activity Authentication Sample
 
@@ -71,6 +72,8 @@ and automatically execute the workflow on startup.
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-localactivity-auth
 ```
+
+For a detailed see the [Interceptor Local Activity Auth README](src/main/java/io/temporal/workflow/interceptor/localactivity/auth/README.md).
 
 
 
