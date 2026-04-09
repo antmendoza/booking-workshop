@@ -24,27 +24,29 @@ temporal server start-dev
 
 ### [Exercise 3](exercise03/README.md) - Showcase context propagation and using interceptors to detect auth failure and refresh token
 
-### [Exercise 4](exercise04/README.md) - Using the options of Spring Boot integration with Temporal.
+### [Exercise 4](exercise04/README.md) - Applying best practices to repo layout
+
+### [Exercise 5](exercise05/README.md) - Using the options of Spring Boot integration with Temporal.
 
 
-### [Exercise 5](exercise05/README.md) - Testing
+### [Exercise 6](exercise06/README.md) - Testing
 * Basics of unit testing
 * Using a replay test
 
-### [Exercise 6](exercise06/README.md) - Worker Versioning
+### [Exercise 7](exercise07/README.md) - Worker Versioning
 * Add a version to your worker and view unpinned workflow migrating to current release.  
 * Show pinned workflow remaining on old worker.
 * Adding version testing
 
-### [Exercise 7](exercise07/README.md) - Priority and Fairness
+### [Exercise 8](exercise08/README.md) - Priority and Fairness
 * Include priority into your app processing
 * Demonstrate fair share processing
 
-### [Exercise 8](exercise08/README.md) - Saga Pattern implementation
+### [Exercise 9](exercise09/README.md) - Saga Pattern implementation
 * Understand scopes
 * Demonstrate applying compensation steps.
 
-### [Exercise 9](exercise09/README.md) - Intro to the metrics and configuring your app appropriately.
+### [Exercise 10](exercise10/README.md) - Intro to the metrics and configuring your app appropriately.
 
-### [Exercise 10](exercise10/README.md) - Dynamic Workflows & DSL
+### [Exercise 11](exercise11/README.md) - Dynamic Workflows & DSL
 
