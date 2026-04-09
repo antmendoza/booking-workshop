@@ -15,7 +15,7 @@ temporal server start-dev
 Each exercise will either have a source available or will be using the source/solution from the previous exercise. In all cases the assumption is that you are using a local temporal server instance unless otherwise specified.  The instructions above detail the requirements you must have on your laptop to run the exercises.
 
 ## Workshop Agenda
-### [Exercise 1](exercise01/README.md) - Get a simple "Hello World" Temporal Springboot application running and understand the project structure.
+### [Exercise 1](exercise01/README.md) - Get a simple "Hello World" Temporal Springboot application running.
 * Running a simple application to start a workflow, execute a task and complete.
 * Understand the "best practices" layout/organisation of code
 
