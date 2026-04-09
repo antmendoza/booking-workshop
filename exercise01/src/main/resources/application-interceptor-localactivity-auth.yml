@@ -1,5 +1,0 @@
-spring:
-  # temporal specific configs
-  temporal:
-    workersAutoDiscovery:
-      packages: io.temporal.workflow.interceptor.localactivity.auth
