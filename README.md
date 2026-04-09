@@ -13,75 +13,38 @@ Start a local Temporal server with the [Temporal CLI](https://docs.temporal.io/c
 temporal server start-dev
 ```
 
-## Running the Application
+## Workshop Agenda
+### Exercise 1 - Get a simple "Hello World" Temporal Springboot application running and understand the project structure.
+* Running a simple application to start a workflow, execute a task and complete.
+* Understand the "best practices" layout/organisation of code
 
-The application starts with no workers running by default.
+### Exercise 2 - Introduce Interceptors
+* Adding a custom metric to count the number of retries of an activity
+* View metrics emitted from application
 
-```bash
-./mvnw spring-boot:run
-```
+### Exercise 3 - Showcase context propagation and using interceptors to detect auth failure and refresh token
 
-## Metrics
-
-The application includes Spring Boot Actuator and Micrometer with a Prometheus registry.
-
-Metrics are available at [http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus)
-
-### Running with the Hello World Sample
-
-Start the application with the `hello` profile to discover workflows and activities in `io.temporal.workflow.hello` and register a worker
-and automatically execute the workflow on startup.
+### Exercise 4 - Using the options of Spring Boot integration with Temporal.
 
 
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=hello
-```
+### Exercise 5 - Testing
+* Basics of unit testing
+* Using a replay test
 
-You can observe the execution in the [Temporal Web UI](http://localhost:8233).
+### Exercise 6 - Worker Versioning
+* Add a version to your worker and view unpinned workflow migrating to current release.  
+* Show pinned workflow remaining on old worker.
+* Adding version testing
 
-See [application-workflow-hello.yml](src/main/resources/application-workflow-hello.yml) for worker configuration.
+### Exercise 7 - Priority and Fairness
+* Include priority into your app processing
+* Demonstrate fair share processing
 
-### Running with the Interceptor Metric Sample
+### Exercise 8 - Saga Pattern implementation
+* Understand scopes
+* Demonstrate applying compensation steps.
 
-Start the application with the `interceptor-metric` profile to discover workflows and activities in `io.temporal.workflow.interceptor.metric` and register a worker
-and automatically execute the workflow on startup.
+### Exercise 9 - Intro to the metrics and configuring your app appropriately.
 
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-metric
-```
+### Exercise 10 - Dynamic Workflows & DSL
 
-Query the metrics to see the activity retry count:
-
-```bash
-curl -s http://localhost:3030/actuator/prometheus | grep '^activity_retry'
-```
-Expected output:
-
-```
-activity_retry_total{activity_type="Greet",...,workflow_run_id="019d5920-4e44-76fd-9c44-f79a27b78b49",workflow_type="HelloInterceptorWorkflow"} 5.0
-
-```
-
-For a detailed see the [Interceptor Metric README](src/main/java/io/temporal/workflow/interceptor/metric/README.md).
-
-### Running with the Interceptor with Local Activity Authentication Sample
-
-Start the application with the `interceptor-localactivity-auth` profile to discover workflows and activities in `io.temporal.workflow.interceptor.localactivity.auth` and register a worker
-and automatically execute the workflow on startup.
-
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-localactivity-auth
-```
-
-For a detailed see the [Interceptor Local Activity Auth README](src/main/java/io/temporal/workflow/interceptor/localactivity/auth/README.md).
-
-
-
-
-## Running Tests
-
-```bash
-./mvnw test
-```
-
-Tests use `TestWorkflowEnvironment` for fast, in-process execution without a live Temporal server.
