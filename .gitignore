@@ -43,4 +43,7 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# intellij
+.idea
+
 /.claude/
