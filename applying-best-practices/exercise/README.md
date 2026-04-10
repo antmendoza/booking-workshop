@@ -40,13 +40,21 @@ Under io/temporal create a package "app"  (App for this exercise but you would u
 Under this package:
 app
 --> api
+
    --> controllers
+
 --> domain
+
    --> workflows
+
       --> activities
+
       --> hello 
+
       --> messages
+
 --> workers
+
 
 Currently nothing needed in the controllers package but if we were to expose REST endpoints they would logically be here.
 Move the activities from the hello package into activites
