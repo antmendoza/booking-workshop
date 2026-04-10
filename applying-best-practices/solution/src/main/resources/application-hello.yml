@@ -1,0 +1,18 @@
+spring:
+  # temporal specific configs
+  temporal:
+    workersAutoDiscovery:
+      packages: io.temporal.workflow.hello
+
+    workers:
+      - task-queue: HelloSampleTaskQueue
+        capacity:
+          max-concurrent-workflow-task-pollers: 100
+          max-concurrent-activity-task-pollers: 100
+        rate-limits:
+          max-worker-activities-per-second: 0
+          max-task-queue-activities-per-second: 0
+    workflow-cache:
+      max-instances: 500
+      max-threads: 500
+      usingVirtualWorkflowThreads: true
