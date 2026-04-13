@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: temporal-samples
+    name: temporal-workshop-use-interceptor-to-handle-auth-failure
 
   # temporal specific configs
   temporal:

@@ -2,4 +2,4 @@ spring:
   # temporal specific configs
   temporal:
     workersAutoDiscovery:
-      packages: io.temporal.workflow.interceptor.metric
+      packages: io.temporal

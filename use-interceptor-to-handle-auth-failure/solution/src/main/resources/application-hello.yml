@@ -2,7 +2,7 @@ spring:
   # temporal specific configs
   temporal:
     workersAutoDiscovery:
-      packages: io.temporal.workflow.hello
+      packages: io.temporal.workshops.springboot.domain.workflows.hello
 
     workers:
       - task-queue: HelloSampleTaskQueue

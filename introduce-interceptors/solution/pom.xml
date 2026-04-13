@@ -11,12 +11,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.example</groupId>
-    <artifactId>temporal-hello-world</artifactId>
+    <groupId>io.temporal.workshops.springboot</groupId>
+    <artifactId>introduce-interceptors-solution</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>temporal-hello-world</name>
-    <description>Temporal workshop</description>
-
+    <name>Temporal Workshop :: Introduce Interceptors :: Solution</name>
 
     <properties>
         <java.version>21</java.version>
@@ -34,19 +32,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- Temporal  -->
-        <dependency>
-            <groupId>io.temporal</groupId>
-            <artifactId>temporal-spring-boot-autoconfigure</artifactId>
-            <version>${temporal.version}</version>
-        </dependency>
 
+        <!-- Temporal  -->
         <dependency>
             <groupId>io.temporal</groupId>
             <artifactId>temporal-spring-boot-starter</artifactId>
             <version>${temporal.version}</version>
         </dependency>
-
 
         <!-- Metrics -->
         <dependency>
@@ -58,7 +50,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <scope>runtime</scope>
         </dependency>
-
 
         <!-- Test -->
         <dependency>
