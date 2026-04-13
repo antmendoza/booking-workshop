@@ -1,6 +1,6 @@
 spring:
   application:
-    name: temporal-workshop-testing
+    name: temporal-testing
 
   temporal:
     connection:

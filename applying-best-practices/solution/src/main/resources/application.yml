@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: temporal-workshop-applying-best-practices
+    name: temporal-best-practices
 
   # temporal specific configs
   temporal:

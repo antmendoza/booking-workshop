@@ -1,6 +1,6 @@
 spring:
   application:
-    name: temporal-workshop-spring-boot-integration
+    name: temporal-integration
 
   temporal:
     connection:

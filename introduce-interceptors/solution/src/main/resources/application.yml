@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: temporal-workshop-introduce-interceptors
+    name: temporal-interceptors
 
   # temporal specific configs
   temporal:
