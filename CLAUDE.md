@@ -1,4 +1,4 @@
-# booking-workshop
+# Temporal x Spring Boot Workshop
 
 Hands-on Temporal + Spring Boot workshop with
 11 progressive exercises for client training.
@@ -36,6 +36,12 @@ cd <exercise>/exercise   # or solution
 
 # Build without tests
 ./mvnw package -DskipTests
+
+# Test all solutions in parallel (requires Task)
+task test
+
+# Test a specific solution
+task test:<name>
 
 # Check retry metrics (requires running app)
 curl -s http://localhost:3030/actuator/prometheus \

@@ -1,4 +1,4 @@
-# booking-workshop
+# Temporal x Spring Boot Workshop
 
 [![Build](https://github.com/antmendoza/booking-workshop/actions/workflows/build.yml/badge.svg)](https://github.com/antmendoza/booking-workshop/actions/workflows/build.yml)
 ![Java 21](https://img.shields.io/badge/Java-21-blue)
@@ -53,6 +53,14 @@ To run tests:
 ```bash
 ./mvnw test
 ```
+
+### Run all solutions at once
+
+Install [Task](https://taskfile.dev), then:
+
+- `task test` — run all solution tests in parallel
+- `task test:<name>` — run a specific solution
+  (e.g. `task test:testing`)
 
 ## Workshop agenda
 

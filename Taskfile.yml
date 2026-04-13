@@ -1,0 +1,59 @@
+# Taskfile for workshop exercises.
+# When adding a new solution with a pom.xml,
+# add a test task below and include it in the
+# 'test' task dependencies.
+
+version: "3"
+
+vars:
+  MVN_OPTS: --batch-mode --no-transfer-progress
+
+tasks:
+  test:
+    desc: Test all solutions
+    deps:
+      - test:applying-best-practices
+      - test:introduce-interceptors
+      - test:use-interceptor-to-handle-auth-failure
+      - test:understand-temporal-integration-with-spring-boot
+      - test:testing
+
+  # --- applying-best-practices ---
+
+  test:applying-best-practices:
+    desc: Test applying-best-practices solution
+    dir: applying-best-practices/solution
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}}
+
+  # --- introduce-interceptors ---
+
+  test:introduce-interceptors:
+    desc: Test introduce-interceptors solution
+    dir: introduce-interceptors/solution
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}}
+
+  # --- use-interceptor-to-handle-auth-failure ---
+
+  test:use-interceptor-to-handle-auth-failure:
+    desc: Test use-interceptor-to-handle-auth-failure solution
+    dir: use-interceptor-to-handle-auth-failure/solution
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}}
+
+  # --- understand-temporal-integration-with-spring-boot ---
+
+  test:understand-temporal-integration-with-spring-boot:
+    desc: Test understand-temporal-integration-with-spring-boot solution
+    dir: understand-temporal-integration-with-spring-boot/solution
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}}
+
+  # --- testing ---
+
+  test:testing:
+    desc: Test testing solution
+    dir: testing/solution
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}}
