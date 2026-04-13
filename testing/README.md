@@ -345,6 +345,9 @@ Revert your changes to `HelloActivity`,
 ## Resources
 
 - [Testing — Temporal Java SDK](https://docs.temporal.io/develop/java/testing-suite)
+- [Testing — Spring Boot Reference](https://docs.spring.io/spring-boot/reference/testing/index.html)
+- [@MockitoBean — Spring Framework Reference](https://docs.spring.io/spring-framework/reference/testing/annotations/integration-spring/annotation-mockitobean.html)
+- [JUnit Assertions](https://docs.junit.org/6.0.3/writing-tests/assertions.html)
 
 ## Solution
 
