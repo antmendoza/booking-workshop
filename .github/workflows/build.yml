@@ -15,6 +15,7 @@ jobs:
         solution:
           - applying-best-practices/solution
           - introduce-interceptors/solution
+          - understand-temporal-integration-with-spring-boot/solution
           - use-interceptor-to-handle-auth-failure/solution
     steps:
       - uses: actions/checkout@v4

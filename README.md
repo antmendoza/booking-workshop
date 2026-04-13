@@ -56,19 +56,19 @@ To run tests:
 
 ## Workshop agenda
 
-| #  | Exercise | Topic |
-|----|----------|-------|
-| 1  | [run-a-simple-workflow](run-a-simple-workflow/exercise/README.md) | Run a simple workflow |
-| 2  | [introduce-interceptors](introduce-interceptors/exercise/README.md) | Custom retry metrics with interceptors |
-| 3  | [use-interceptor-to-handle-auth-failure](use-interceptor-to-handle-auth-failure/exercise/README.md) | Auth failure handling via interceptors |
-| 4  | [applying-best-practices](applying-best-practices/exercise/README.md) | Applying best practices |
-| 5  | [understand-temporal-integration-with-spring-boot](understand-temporal-integration-with-spring-boot/exercise/README.md) | Spring Boot integration |
-| 6  | [testing](testing/exercise/README.md) | Unit testing and replay testing |
-| 7  | [worker-versioning](worker-versioning/exercise/README.md) | Worker versioning and migration |
-| 8  | [priority-and-fairness](priority-and-fairness/exercise/README.md) | Priority and fair share processing |
-| 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md) | Saga pattern with compensation |
-| 10 | [understanding-metrics](understanding-metrics/exercise/README.md) | Understanding metrics |
-| 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md) | Dynamic workflows and DSL |
+| #  | Exercise                                                                                                                | Topic                                  |
+|----|-------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| 1  | [run-a-simple-workflow](run-a-simple-workflow/exercise/README.md)                                                       | Run a simple workflow                  |
+| 2  | [introduce-interceptors](introduce-interceptors/exercise/README.md)                                                     | Custom retry metrics with interceptors |
+| 3  | [use-interceptor-to-handle-auth-failure](use-interceptor-to-handle-auth-failure/exercise/README.md)                     | Auth failure handling via interceptors |
+| 4  | [applying-best-practices](applying-best-practices/exercise/README.md)                                                   | Applying best practices                |
+| 5  | [understand-temporal-integration-with-spring-boot](understand-temporal-integration-with-spring-boot/exercise/README.md) | Spring Boot integration                |
+| 6  | [testing](testing/exercise/README.md)                                                                                   | Unit testing and replay testing        |
+| 7  | [worker-versioning](worker-versioning/exercise/README.md)                                                               | Worker versioning and migration        |
+| 8  | [priority-and-fairness](priority-and-fairness/exercise/README.md)                                                       | Priority and fair share processing     |
+| 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md)                                           | Saga pattern with compensation         |
+| 10 | [understanding-metrics](understanding-metrics/exercise/README.md)                                                       | Understanding metrics                  |
+| 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md)                                               | Dynamic workflows and DSL              |
 
 ## License
 
