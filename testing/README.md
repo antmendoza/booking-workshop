@@ -54,8 +54,6 @@ it enables the in-memory Temporal test server:
 
 ```yaml
 spring:
-  main:
-    allow-bean-definition-overriding: true
   temporal:
     test-server:
       enabled: true
@@ -68,7 +66,7 @@ Tests activate it with
 `@ActiveProfiles("test")`.
 
 Look at the `src/test/` directory — it
-contains three test files with TODO
+contains four test files with TODO
 instructions:
 
 - **`HelloWorkflowTest.java`** — tests the
@@ -80,6 +78,9 @@ instructions:
 - **`HelloWorkflowReplayTest.java`** —
   captures a workflow history and replays it
   against the current workflow implementation
+- **`HelloWorkflowReplayFromFileTest.java`**
+  — replays a workflow from a JSON history
+  file exported from Temporal
 
 ### Step 2 — Write the workflow integration test
 
@@ -195,27 +196,123 @@ execution. When it throws, you have introduced
 a non-deterministic change that would break
 in-flight workflows.
 
-> **Tip:** In production you would typically
-> export histories from the Temporal Web UI or
-> CLI (`temporal workflow show --output json`)
-> and replay them from JSON files using
-> `WorkflowReplayer`
-> `.replayWorkflowExecutionFromResource()`.
-> The programmatic approach used here is
-> self-contained and does not require a
-> running server.
+### Step 5 — Replay from a JSON history file
 
-### Step 5 — Run the tests
+Open `HelloWorkflowReplayFromFileTest.java`.
+In production, workflow histories are exported
+from the Temporal CLI or Web UI and replayed
+from JSON files. This avoids needing a running
+server to capture histories at test time.
 
-Run all three tests:
+A pre-recorded history file is already
+provided at
+`src/test/resources/hello-workflow-history.json`.
+It was generated with the Temporal CLI:
+
+```bash
+temporal workflow show \
+    -w <workflowId> --output json \
+    > hello-workflow-history.json
+```
+
+This test does not use `@SpringBootTest` —
+replaying a history file is a pure SDK
+operation that only needs the workflow
+implementation class.
+
+In the test method, replay the history file
+against the current implementation:
+
+```java
+WorkflowReplayer
+    .replayWorkflowExecutionFromResource(
+        "hello-workflow-history.json",
+        HelloWorkflowImpl.class);
+```
+
+### Step 6 — Run the tests
+
+Run all four tests:
 
 ```bash
 ./mvnw test
 ```
 
-All three tests should pass. No running
+All four tests should pass. No running
 Temporal server is needed — the test
 environment handles everything in-memory.
+
+### Step 7 — Break the replay
+
+Now that all tests pass, let's see what
+happens when you introduce a
+non-deterministic change.
+
+Open `HelloActivity.java` and add a new
+method to the activity interface:
+
+```java
+@ActivityMethod
+int getAge(String name);
+```
+
+Open `HelloActivityImpl.java` and implement
+it:
+
+```java
+@Override
+public int getAge(String name) {
+    return name.length(); // dummy implementation
+}
+```
+
+Open `HelloWorkflowImpl.java` and call this
+new activity **before** the greeting:
+
+```java
+@Override
+public String sayHello(String name) {
+    LOGGER.info("Saying hello: {}", name);
+    int age = helloActivity.getAge(name);
+    return helloActivity.greet(name)
+        + " You are " + age + ".";
+}
+```
+
+Run the tests again:
+
+```bash
+./mvnw test
+```
+
+**What happens?**
+
+- `HelloWorkflowTest` and
+  `HelloWorkflowMockitoTest` still pass —
+  they run against fresh executions that
+  match the updated code.
+- `HelloWorkflowReplayTest` still passes —
+  it captures a new history and replays it
+  immediately, so the history matches the
+  current code.
+- **`HelloWorkflowReplayFromFileTest` fails**
+  with a non-determinism error. The recorded
+  history expects a `Greet` activity at
+  event 5, but the updated code now
+  schedules `GetAge` first. The replayer
+  detects the mismatch and throws.
+
+This is exactly the scenario replay testing
+is designed to catch: a code change that
+would break workflows already running in
+production. The JSON history file acts as a
+contract — any change that alters the
+sequence of commands is flagged before it
+reaches production.
+
+Revert your changes to `HelloActivity`,
+`HelloActivityImpl`, and
+`HelloWorkflowImpl` before continuing.
 
 ## Key Takeaways
 
@@ -237,7 +334,9 @@ environment handles everything in-memory.
 
 - Replay tests catch non-deterministic
   workflow changes before they break
-  production.
+  production. Histories can be replayed
+  programmatically or from JSON files
+  exported with the Temporal CLI.
 
 - Use `Workflow.getLogger()` in workflows
   even in tests — the test environment
