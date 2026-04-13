@@ -45,5 +45,3 @@ buildNumber.properties
 
 # intellij
 .idea
-
-/.claude/

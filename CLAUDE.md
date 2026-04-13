@@ -1,68 +1,117 @@
-# CLAUDE.md
+# booking-workshop
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Hands-on Temporal + Spring Boot workshop with
+11 progressive exercises for client training.
 
-## Prerequisites
+See [README.md](README.md) for full documentation.
+
+## Tech stack
 
 - Java 21
-- Temporal server running locally: `temporal server start-dev` (serves on `127.0.0.1:7233`, UI at `http://localhost:8233`)
+- Spring Boot 3.5
+- Temporal Java SDK 1.32
+- Maven (wrapper per exercise)
 
-## Common Commands
+## Build & run
 
-All commands run from `exercise1/`:
+Each exercise is self-contained in its own
+directory with `exercise/` and `solution/`
+subfolders. Only some exercises include a
+`pom.xml` — others build on prior solutions.
 
 ```bash
+# Run an exercise (from its directory)
+cd <exercise>/exercise   # or solution
+./mvnw spring-boot:run
+
+# Run with a Spring profile
+./mvnw spring-boot:run \
+  -Dspring-boot.run.profiles=<profile>
+
 # Run tests
 ./mvnw test
 
 # Run a specific test
-./mvnw test -Dtest=HelloWorldWorkflowTest
+./mvnw test -Dtest=<TestClass>
 
 # Build without tests
 ./mvnw package -DskipTests
 
-# Run with a specific exercise profile
-./mvnw spring-boot:run -Dspring-boot.run.profiles=hello
-./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-metric
-./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-localactivity-auth
-
 # Check retry metrics (requires running app)
-curl -s http://localhost:3030/actuator/prometheus | grep '^activity_retry'
+curl -s http://localhost:3030/actuator/prometheus \
+  | grep '^activity_retry'
 ```
 
-## Architecture
+## Modules
 
-This is a Spring Boot + Temporal SDK workshop with multiple exercises, each activated via Spring profiles. The single application module (`exercise1/`) contains all exercises co-located under separate packages.
+- **run-a-simple-workflow** — basic workflow
+  and activity pattern
+- **introduce-interceptors** — retry
+  observability via `WorkerInterceptor`
+- **use-interceptor-to-handle-auth-failure** —
+  auth token propagation + local activity refresh
+- **applying-best-practices** — code
+  organisation guidelines
+- **understand-temporal-integration-with-spring-boot**
+  — auto-registration of workers via Spring Boot
+- **testing** — unit testing with
+  `TestWorkflowEnvironment` and replay tests
+- **worker-versioning** — pinned vs unpinned
+  workflow migration
+- **priority-and-fairness** — priority queues
+  and fair share processing
+- **saga-pattern-implementation** — scopes
+  and compensation steps
+- **understanding-metrics** — Temporal and
+  application metrics
+- **dynamic-workflows-and-dsl** — dynamic
+  workflow construction from DSL definitions
 
-### Profile-per-exercise pattern
+## Agents
 
-Each exercise lives in its own package under `src/main/java/io/temporal/workflow/` and is activated by a Spring profile:
+Use the following agents (from the
+[skillbox](https://github.com/alexandreroman/skillbox)
+plugin) for all code tasks:
 
-| Profile | Package | Purpose |
-|---|---|---|
-| `hello` | `workflow.hello` | Basic workflow/activity pattern |
-| `interceptor-metric` | `workflow.interceptor.metric` | Retry observability via `WorkerInterceptor` |
-| `interceptor-localactivity-auth` | `workflow.interceptor.localactivity.auth` | Auth token propagation + local activity token refresh |
+- **code-writer** — for ANY task that writes,
+  modifies, or refactors code. No exceptions.
+- **code-reviewer** — for read-only code review
+  before merging or when investigating issues.
 
-Each profile has a corresponding `application-{profile}.yml` that configures namespace and task queue auto-discovery for that package only.
+## Memory
 
-### Temporal Spring Boot integration
+At the start of every conversation, read
+`.claude/project-memory/MEMORY.md` to load
+project context from previous conversations.
 
-- Workflows implement an `@WorkflowInterface` and are annotated `@WorkflowImpl(taskQueues = "...")` — Spring Boot auto-registers them as workers.
-- Activities implement an `@ActivityInterface` and are annotated `@ActivityImpl(taskQueues = "...")` — auto-registered as Spring `@Component` beans.
-- `StarterRunner` (per exercise) implements `ApplicationRunner` to kick off a workflow execution on startup.
+Use the **project-memory** skill (from the
+[skillbox](https://github.com/alexandreroman/skillbox)
+plugin) proactively — without being asked — whenever
+the conversation reveals project decisions, deadlines,
+team context, external references, workflow preferences,
+or corrective feedback worth persisting across
+conversations.
 
-### Exercise 2 — Retry metrics interceptor
+**Important:** Always use the **project-memory**
+skill to persist information. Never use the built-in
+auto-memory system (`~/.claude/projects/.../memory/`)
+for project decisions or context — it is local and
+not shared with the team.
 
-`RetryLoggingWorkerInterceptor` wraps activity execution via `ActivityInboundCallsInterceptor`. On every 5th attempt it emits a Prometheus counter (`activity_retry_count_total`) tagged with `workflow_run_id`. The activity itself intentionally throws for the first 5 attempts to simulate transient failures.
+## Conventions
 
-### Exercise 3 — Auth context propagation + interceptor chain
-
-Three-layer design:
-1. **`MDCContextPropagator`** — serializes MDC keys prefixed `x-auth-` into Temporal workflow headers so auth tokens flow from starter → workflow worker → activity worker automatically.
-2. **`ActivityAuthOutboundInterceptor`** — intercepts outgoing activity schedules. If the activity fails with `ApplicationFailure` type `TokenExpired`, it calls a local activity to regenerate the token, updates MDC, then retries the original activity.
-3. **`TemporalOptionsConfig`** — Spring `@Configuration` that registers the context propagator on `WorkflowClientOptions`.
-
-### Testing approach
-
-Tests use `TestWorkflowEnvironment` (in-process, no live server needed). Activities are mocked with Mockito; workflows run against the mock. See `HelloWorldWorkflowTest.java` for the pattern.
+- Line length limits for readability:
+  - Text / Markdown: 80 columns max
+  - Code: 120 columns max
+- Follow standard Markdown conventions: blank line
+  before and after headings, blank line before and
+  after lists, fenced code blocks with a language tag
+- Always use the latest LTS or stable version of
+  languages, frameworks, and libraries. Check the
+  official documentation or use available tools
+  (e.g. context7) to verify current versions before
+  choosing a dependency.
+- Temporal server must run locally for integration
+  tests: `temporal server start-dev`
+- Each exercise is independent — do not create
+  shared parent POMs or cross-exercise dependencies

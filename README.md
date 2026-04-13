@@ -1,53 +1,71 @@
-# Temporal Booking Workshop
+# booking-workshop
 
-A Spring Boot application for running Temporal workers.
+Hands-on workshop teaching Temporal workflow
+patterns with Spring Boot. Designed for
+developers learning to build resilient,
+distributed applications using the Temporal SDK.
+Delivered as a guided, multi-exercise training
+session.
+
+## Features
+
+- Progressive exercises from basic workflows
+  to advanced patterns
+- Each exercise includes instructions and a
+  reference solution
+- Spring Boot + Temporal SDK integration
+- Covers interceptors, auth propagation, testing,
+  worker versioning, saga pattern, metrics, and DSL
 
 ## Prerequisites
 
 - Java 21
-- Temporal server running locally on `127.0.0.1:7233`
+- [Temporal CLI](https://docs.temporal.io/cli)
 
-Start a local Temporal server with the [Temporal CLI](https://docs.temporal.io/cli):
+Start a local Temporal server:
 
 ```bash
 temporal server start-dev
 ```
-Each exercise will either have a source available or will be using the source/solution from the previous exercise. In all cases the assumption is that you are using a local temporal server instance unless otherwise specified.  The instructions above detail the requirements you must have on your laptop to run the exercises.
 
-## Workshop Agenda
-### [Exercise 1](run-a-simple-workflow/exercise/README.md) - Run a simple workflow.
-* Running a simple application to start a workflow, execute a task and complete.
-* Understand the "best practices" layout/organisation of code
+The server listens on `127.0.0.1:7233` with a
+web UI at `http://localhost:8233`.
 
-### [Exercise 2](introduce-interceptors/exercise/README.md) - Introduce Interceptors
-* Adding a custom metric to count the number of retries of an activity
-* View metrics emitted from application
+## Getting started
 
-### [Exercise 3](use-interceptor-to-handle-auth-failure/exercise/README.md) - use interceptor to handle auth failure
+Each exercise lives in its own directory with an
+`exercise/` subfolder (instructions) and a
+`solution/` subfolder (reference implementation).
 
-### [Exercise 4](applying-best-practices/exercise/README.md) - Applying best practices
+To build and run an exercise that has a `pom.xml`:
 
-### [Exercise 5](understand-temporal-integration-with-spring-boot/exercise/README.md) - Understand Temporal integration with Spring Boot
+```bash
+cd <exercise>/exercise   # or solution
+./mvnw spring-boot:run
+```
 
+To run tests:
 
-### [Exercise 6](testing/exercise/README.md) - Testing
-* Basics of unit testing
-* Using a replay test
+```bash
+./mvnw test
+```
 
-### [Exercise 7](worker-versioning/exercise/README.md) - Worker Versioning
-* Add a version to your worker and view unpinned workflow migrating to current release.  
-* Show pinned workflow remaining on old worker.
-* Adding version testing
+## Workshop agenda
 
-### [Exercise 8](priority-and-fairness/exercise/README.md) - Priority and Fairness
-* Include priority into your app processing
-* Demonstrate fair share processing
+| #  | Exercise | Topic |
+|----|----------|-------|
+| 1  | [run-a-simple-workflow](run-a-simple-workflow/exercise/README.md) | Run a simple workflow |
+| 2  | [introduce-interceptors](introduce-interceptors/exercise/README.md) | Custom retry metrics with interceptors |
+| 3  | [use-interceptor-to-handle-auth-failure](use-interceptor-to-handle-auth-failure/exercise/README.md) | Auth failure handling via interceptors |
+| 4  | [applying-best-practices](applying-best-practices/exercise/README.md) | Applying best practices |
+| 5  | [understand-temporal-integration-with-spring-boot](understand-temporal-integration-with-spring-boot/exercise/README.md) | Spring Boot integration |
+| 6  | [testing](testing/exercise/README.md) | Unit testing and replay testing |
+| 7  | [worker-versioning](worker-versioning/exercise/README.md) | Worker versioning and migration |
+| 8  | [priority-and-fairness](priority-and-fairness/exercise/README.md) | Priority and fair share processing |
+| 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md) | Saga pattern with compensation |
+| 10 | [understanding-metrics](understanding-metrics/exercise/README.md) | Understanding metrics |
+| 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md) | Dynamic workflows and DSL |
 
-### [Exercise 9](saga-pattern-implementation/exercise/README.md) - Saga Pattern implementation
-* Understand scopes
-* Demonstrate applying compensation steps.
+## License
 
-### [Exercise 10](understanding-metrics/exercise/README.md) - Understanding metrics
-
-### [Exercise 11](dynamic-workflows-and-dsl/exercise/README.md) - Dynamic Workflows & DSL
-
+Apache-2.0 — see [LICENSE](LICENSE) for details.
