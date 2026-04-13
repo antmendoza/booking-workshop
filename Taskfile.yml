@@ -6,7 +6,7 @@
 version: "3"
 
 vars:
-  MVN_OPTS: --batch-mode --no-transfer-progress
+  MVN_OPTS: --batch-mode --no-transfer-progress --quiet
 
 tasks:
   test:
@@ -23,6 +23,7 @@ tasks:
   test:applying-best-practices:
     desc: Test applying-best-practices solution
     dir: applying-best-practices/solution
+    silent: true
     cmds:
       - ./mvnw test {{.MVN_OPTS}}
 
@@ -31,6 +32,7 @@ tasks:
   test:introduce-interceptors:
     desc: Test introduce-interceptors solution
     dir: introduce-interceptors/solution
+    silent: true
     cmds:
       - ./mvnw test {{.MVN_OPTS}}
 
@@ -39,6 +41,7 @@ tasks:
   test:use-interceptor-to-handle-auth-failure:
     desc: Test use-interceptor-to-handle-auth-failure solution
     dir: use-interceptor-to-handle-auth-failure/solution
+    silent: true
     cmds:
       - ./mvnw test {{.MVN_OPTS}}
 
@@ -47,6 +50,7 @@ tasks:
   test:understand-temporal-integration-with-spring-boot:
     desc: Test understand-temporal-integration-with-spring-boot solution
     dir: understand-temporal-integration-with-spring-boot/solution
+    silent: true
     cmds:
       - ./mvnw test {{.MVN_OPTS}}
 
@@ -55,5 +59,6 @@ tasks:
   test:testing:
     desc: Test testing solution
     dir: testing/solution
+    silent: true
     cmds:
       - ./mvnw test {{.MVN_OPTS}}

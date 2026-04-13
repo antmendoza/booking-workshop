@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: temporal-workshop-testing
+
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    workersAutoDiscovery:
+      packages: io.temporal
