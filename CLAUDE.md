@@ -115,6 +115,9 @@ not shared with the team.
   tests: `temporal server start-dev`
 - Each exercise is independent — do not create
   shared parent POMs or cross-exercise dependencies
-- Avoid compound shell commands (`;`, `&&`, `|`)
-  in Bash tool calls — each command requires its
-  own permission approval
+- Never use compound shell commands (`;`, `&&`,
+  `|`) in Bash tool calls. Each command must be
+  a separate Bash tool call. Common violations
+  to watch for: `grep ... | head`, `cd ... &&
+  cmd`. Split every pipeline or chain into
+  individual calls.
