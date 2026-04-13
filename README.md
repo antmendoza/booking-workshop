@@ -1,5 +1,9 @@
 # booking-workshop
 
+[![Build](https://github.com/antmendoza/booking-workshop/actions/workflows/build.yml/badge.svg)](https://github.com/antmendoza/booking-workshop/actions/workflows/build.yml)
+![Java 21](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot 3.5](https://img.shields.io/badge/Spring%20Boot-3.5-green)
+
 Hands-on workshop teaching Temporal workflow
 patterns with Spring Boot. Designed for
 developers learning to build resilient,
