@@ -10,3 +10,4 @@
 
 - [Update CI on new solution](references/feedback_update_ci_on_new_solution.md) — add new solutions to GH Actions build matrix when implemented
 - [Update Taskfile on new solution](references/feedback_update_taskfile_on_new_solution.md) — add test task to Taskfile.yml for new solutions
+- [Spring Boot Test YAML override pitfall](references/feedback_spring_boot_test_yaml_override.md) — use application-test.yaml + @ActiveProfiles, not application.yaml in test resources

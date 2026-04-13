@@ -2,46 +2,29 @@ package io.temporal.workshops.springboot.testing.hello;
 
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
-import io.temporal.testing.TestWorkflowEnvironment;
-import io.temporal.worker.Worker;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class HelloWorkflowTest {
 
-    private TestWorkflowEnvironment testEnv;
-    private WorkflowClient client;
-
-    @BeforeEach
-    void setUp() {
-        testEnv = TestWorkflowEnvironment.newInstance();
-        client = testEnv.getWorkflowClient();
-
-        Worker worker = testEnv.newWorker(HelloWorkflow.TASK_QUEUE);
-        worker.registerWorkflowImplementationTypes(HelloWorkflowImpl.class);
-        worker.registerActivitiesImplementations(
-                (HelloActivity) name -> "Hello, " + name + "!");
-
-        testEnv.start();
-    }
-
-    @AfterEach
-    void tearDown() {
-        testEnv.close();
-    }
+    @Autowired
+    private WorkflowClient workflowClient;
 
     @Test
     void sayHello_returnsGreeting() {
-        HelloWorkflow workflow = client.newWorkflowStub(
+        var workflow = workflowClient.newWorkflowStub(
                 HelloWorkflow.class,
                 WorkflowOptions.newBuilder()
                         .setTaskQueue(HelloWorkflow.TASK_QUEUE)
                         .build());
 
-        String result = workflow.sayHello("Temporal");
+        var result = workflow.sayHello("Temporal");
 
         assertEquals("Hello, Temporal!", result);
     }

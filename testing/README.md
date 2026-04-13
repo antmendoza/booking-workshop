@@ -1,28 +1,30 @@
-# Testing Temporal Workflows
+# Testing Temporal Workflows with Spring Boot
 
-Temporal provides a dedicated testing framework
-(`temporal-testing`) that lets you test workflows
-without a running Temporal server. The
-`TestWorkflowEnvironment` starts an in-memory
-implementation of the Temporal service where you
-can register workflows and mock activities.
-Additionally, replay testing lets you verify that
-code changes are backwards-compatible with
+The Temporal Spring Boot starter integrates
+with the Spring Boot Test framework through
+the `temporal-testing` module. When the test
+server is enabled, the auto-configuration
+provides an in-memory Temporal service.
+Workflows and activities are auto-discovered
+and registered exactly as in production — no
+manual worker setup required. Additionally,
+replay testing lets you verify that code
+changes are backwards-compatible with
 already-running workflow executions.
 
-In this exercise you will write three different
-kinds of tests for the Hello workflow: a unit
-test with a hand-written activity mock, a
-Mockito-based test, and a replay test.
+In this exercise you will write three
+different kinds of tests for the Hello
+workflow: a Spring Boot integration test with
+the real activity, a Mockito-based test with
+a mocked activity, and a replay test.
 
 ## Objective
 
 Write tests for a Temporal workflow that:
 
-- Use `TestWorkflowEnvironment` for in-memory
-  testing
-- Mock activities with inline lambdas and with
-  Mockito
+- Use `@SpringBootTest` with the in-memory
+  Temporal test server
+- Mock activities using `@MockitoBean`
 - Replay a workflow execution from a captured
   history
 
@@ -30,159 +32,156 @@ Write tests for a Temporal workflow that:
 
 - Java 21
 - Familiarity with Temporal workflows and
-  activities (interfaces, implementations, task
-  queues)
-- Familiarity with JUnit 5 basics
-- **No running Temporal server needed** -- tests
-  use the in-memory test environment
+  activities (interfaces, implementations,
+  task queues)
+- Familiarity with JUnit 5 and Spring Boot
+  Test basics
+- **No running Temporal server needed** —
+  tests use the in-memory test server
 
 ## Steps
 
-### Step 1 -- Explore the project
+### Step 1 — Explore the project
 
-Open the `exercise/` directory. A working Spring
-Boot application is already provided with
-`HelloWorkflow` and `HelloActivity` implemented
-in the `hello` package.
+Open the `exercise/` directory. A working
+Spring Boot application is already provided
+with `HelloWorkflow` and `HelloActivity`
+implemented in the `hello` package.
 
-Look at the `src/test/` directory -- it contains
-three test files with TODO instructions:
+Look at the test configuration in
+`src/test/resources/application-test.yaml` —
+it enables the in-memory Temporal test server:
 
-- **`HelloWorkflowTest.java`** -- tests the
-  workflow with a lambda-based activity mock
-- **`HelloWorkflowMockitoTest.java`** -- tests
-  the workflow using Mockito to mock the activity
-- **`HelloWorkflowReplayTest.java`** -- captures
-  a workflow history and replays it against the
-  current workflow implementation
-
-### Step 2 -- Write the workflow unit test
-
-Open `HelloWorkflowTest.java`. This test uses
-`TestWorkflowEnvironment` to run the workflow
-in-memory with a hand-written activity mock.
-
-In the `setUp()` method:
-
-1. Create an instance with
-   `TestWorkflowEnvironment.newInstance()`.
-2. Get a `WorkflowClient` from the test
-   environment using `testEnv.getWorkflowClient()`.
-3. Create a `Worker` for
-   `HelloWorkflow.TASK_QUEUE` using
-   `testEnv.newWorker(HelloWorkflow.TASK_QUEUE)`.
-4. Register the workflow implementation type on
-   the worker with
-   `worker.registerWorkflowImplementationTypes(HelloWorkflowImpl.class)`.
-5. Register a mocked activity using a lambda
-   that implements the `HelloActivity` interface:
-
-```java
-worker.registerActivitiesImplementations(
-    (HelloActivity) name -> "Hello, " + name + "!"
-);
+```yaml
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  temporal:
+    test-server:
+      enabled: true
 ```
 
-6. Start the environment with
-   `testEnv.start()`.
+This profile-based configuration extends
+`src/main/resources/application.yaml` without
+overriding the `workersAutoDiscovery` setting.
+Tests activate it with
+`@ActiveProfiles("test")`.
 
-In the `tearDown()` method, close the
-environment with `testEnv.close()`.
+Look at the `src/test/` directory — it
+contains three test files with TODO
+instructions:
 
-In the test method:
+- **`HelloWorkflowTest.java`** — tests the
+  workflow with the real activity
+  implementation
+- **`HelloWorkflowMockitoTest.java`** — tests
+  the workflow using `@MockitoBean` to mock
+  the activity
+- **`HelloWorkflowReplayTest.java`** —
+  captures a workflow history and replays it
+  against the current workflow implementation
 
-1. Create a workflow stub using
-   `client.newWorkflowStub()` with
-   `WorkflowOptions` that specify the task
-   queue.
-2. Execute the workflow by calling
+### Step 2 — Write the workflow integration test
+
+Open `HelloWorkflowTest.java`. This test uses
+`@SpringBootTest` to load the full application
+context with the in-memory Temporal test
+server.
+
+The class is already annotated with
+`@SpringBootTest` and
+`@ActiveProfiles("test")`.
+
+1. Inject the `WorkflowClient` using
+   `@Autowired`.
+2. In the test method, create a workflow stub
+   using `workflowClient.newWorkflowStub()`
+   with `WorkflowOptions` that specify the
+   task queue.
+3. Execute the workflow by calling
    `sayHello("Temporal")`.
-3. Assert the result equals the expected
+4. Assert the result equals the expected
    greeting.
 
-### Step 3 -- Write the Mockito-based test
+The real `HelloActivityImpl` (a Spring
+`@Component`) is auto-discovered and
+registered — no mocking needed.
 
-Open `HelloWorkflowMockitoTest.java`. This test
-uses Mockito to mock the activity, which gives
-you more control over verification.
+### Step 3 — Write the Mockito-based test
 
-In the `setUp()` method:
+Open `HelloWorkflowMockitoTest.java`. This
+test uses `@MockitoBean` to replace the real
+activity bean with a Mockito mock, giving you
+control over the activity's behavior and
+verification.
 
-1. Create a Mockito mock with
-   `Mockito.mock(HelloActivity.class)`.
-2. Configure the mock's behavior:
+1. Inject the `WorkflowClient` using
+   `@Autowired`.
+2. Declare a `@MockitoBean` field for
+   `HelloActivityImpl`:
+
+```java
+@MockitoBean
+private HelloActivityImpl mockedActivity;
+```
+
+`@MockitoBean` replaces the real Spring bean
+with a Mockito mock in the application
+context. The Temporal auto-configuration
+picks up this mock when registering
+activities.
+
+3. In the `setUp()` method, configure the
+   mock's behavior:
 
 ```java
 when(mockedActivity.greet(anyString()))
     .thenAnswer(inv ->
-        "Mocked: Hello, " + inv.getArgument(0) + "!"
-    );
+        "Mocked: Hello, " + inv.getArgument(0)
+            + "!");
 ```
 
-3. Create the `TestWorkflowEnvironment`,
-   `WorkflowClient`, and `Worker` as in the
-   previous test.
-4. Register the workflow implementation type.
-5. Register the activity by wrapping the mock
-   with a lambda. Mockito proxies inherit the
-   `@ActivityMethod` annotation, which Temporal
-   rejects on concrete classes. A lambda avoids
-   this:
-
-```java
-worker.registerActivitiesImplementations(
-    (HelloActivity) mockedActivity::greet
-);
-```
-
-6. Start the environment.
-
-In the test method, after executing the workflow
-and asserting the result, use `verify()` to
-confirm the activity was called with the correct
-argument:
+4. In the test method, execute the workflow,
+   assert the mocked result, and use
+   `verify()` to confirm the activity was
+   called:
 
 ```java
 verify(mockedActivity).greet("Temporal");
 ```
 
-Mockito is preferable when you need to verify
-call counts, capture arguments, or set up
-complex stubbing logic.
+`@MockitoBean` is preferable when you need to
+verify call counts, capture arguments, or set
+up complex stubbing logic.
 
-### Step 4 -- Write the replay test
+### Step 4 — Write the replay test
 
 Open `HelloWorkflowReplayTest.java`. Replay
 testing verifies that changes to workflow code
 are backwards-compatible with executions that
 are already running. It works by replaying a
 recorded workflow event history against the
-current workflow implementation. If the code has
-changed in a non-deterministic way (e.g.
-reordering activities, changing arguments), the
-replay fails.
+current workflow implementation. If the code
+has changed in a non-deterministic way (e.g.
+reordering activities, changing arguments),
+the replay fails.
 
 In this test you will run the workflow once to
-produce a real history, then replay that history
-against the current code.
+produce a real history, then replay that
+history against the current code.
 
-1. Create a `TestWorkflowEnvironment` using
-   try-with-resources so it auto-closes.
-2. Create a `Worker`, register
-   `HelloWorkflowImpl` and a mocked
-   `HelloActivity`, then start the environment.
-3. Create a workflow stub, execute
+1. Create a workflow stub and execute
    `sayHello("Temporal")`.
-4. Fetch the recorded execution history:
+2. Fetch the recorded execution history:
 
 ```java
 WorkflowExecution execution = WorkflowStub
     .fromTyped(workflow).getExecution();
-var history = client.fetchHistory(
+var history = workflowClient.fetchHistory(
     execution.getWorkflowId());
 ```
 
-5. Replay the history against the current
+3. Replay the history against the current
    implementation:
 
 ```java
@@ -200,12 +199,13 @@ in-flight workflows.
 > export histories from the Temporal Web UI or
 > CLI (`temporal workflow show --output json`)
 > and replay them from JSON files using
-> `WorkflowReplayer.replayWorkflowExecutionFromResource()`.
+> `WorkflowReplayer`
+> `.replayWorkflowExecutionFromResource()`.
 > The programmatic approach used here is
-> self-contained and does not require a running
-> server.
+> self-contained and does not require a
+> running server.
 
-### Step 5 -- Run the tests
+### Step 5 — Run the tests
 
 Run all three tests:
 
@@ -213,32 +213,39 @@ Run all three tests:
 ./mvnw test
 ```
 
-All three tests should pass. No running Temporal
-server is needed -- the test environment handles
-everything in-memory.
+All three tests should pass. No running
+Temporal server is needed — the test
+environment handles everything in-memory.
 
 ## Key Takeaways
 
-- `TestWorkflowEnvironment` provides an
-  in-memory Temporal service for fast, isolated
-  testing.
+- `@SpringBootTest` with the Temporal test
+  server provides an in-memory Temporal
+  service for fast, isolated testing.
 
-- Activities can be mocked with simple lambdas
-  or Mockito depending on your testing needs.
+- Use `@ActiveProfiles("test")` with an
+  `application-test.yaml` to enable the test
+  server without overriding the main
+  configuration.
 
-- Replay tests catch non-deterministic workflow
-  changes before they break production.
+- Workflows and activities are
+  auto-discovered and registered just like in
+  production — no manual worker setup.
 
-- Testing does not require a running Temporal
-  server.
+- Activities can be mocked with
+  `@MockitoBean` to isolate workflow logic.
 
-- Use `Workflow.getLogger()` in workflows even
-  in tests -- the test environment handles
-  replay-safe logging.
+- Replay tests catch non-deterministic
+  workflow changes before they break
+  production.
+
+- Use `Workflow.getLogger()` in workflows
+  even in tests — the test environment
+  handles replay-safe logging.
 
 ## Resources
 
-- [Testing -- Temporal Java SDK](https://docs.temporal.io/develop/java/testing-suite)
+- [Testing — Temporal Java SDK](https://docs.temporal.io/develop/java/testing-suite)
 
 ## Solution
 
