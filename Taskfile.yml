@@ -27,7 +27,7 @@ tasks:
     internal: true
     dir: "{{.SOLUTION}}/solution"
     cmds:
-      - ./mvnw test {{.MVN_OPTS}} -DargLine="{{.SUREFIRE_JVM_OPTS}}" > /dev/null 2>&1
+      - ./mvnw clean test {{.MVN_OPTS}} -DargLine="{{.SUREFIRE_JVM_OPTS}}" > /dev/null 2>&1
 
   test:applying-best-practices:
     desc: Test applying-best-practices solution
