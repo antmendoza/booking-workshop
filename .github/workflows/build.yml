@@ -1,0 +1,33 @@
+name: Build Apps
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        solution:
+          - applying-best-practices/solution
+          - introduce-interceptors/solution
+          - use-interceptor-to-handle-auth-failure/solution
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: >-
+            ${{ matrix.solution }}/pom.xml
+
+      - name: Build ${{ matrix.solution }}
+        working-directory: ${{ matrix.solution }}
+        run: ./mvnw package -DskipTests
