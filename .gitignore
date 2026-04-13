@@ -46,3 +46,5 @@ buildNumber.properties
 
 # intellij
 .idea
+
+worktrees
