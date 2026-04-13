@@ -1,6 +1,7 @@
-package io.integration.workflow.hello;
+package io.integration.workshops.springboot.domain.workflows.hello;
 
 
+import io.integration.workshops.springboot.domain.workflows.activities.HelloActivity;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowOptions;
 import io.temporal.testing.TestWorkflowEnvironment;
@@ -25,7 +26,8 @@ class HelloWorldWorkflowTest {
 
         Worker worker = testEnv.newWorker(TASK_QUEUE);
         worker.registerWorkflowImplementationTypes(HelloWorldWorkflowImpl.class);
-        worker.registerActivitiesImplementations((HelloActivity) name -> "Hello " + name + " from mocked activity");
+        worker.registerActivitiesImplementations(
+                (HelloActivity) name -> "Hello " + name + " from mocked activity");
 
         testEnv.start();
     }
