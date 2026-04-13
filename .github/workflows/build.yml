@@ -31,4 +31,4 @@ jobs:
 
       - name: Build ${{ matrix.solution }}
         working-directory: ${{ matrix.solution }}
-        run: ./mvnw package -DskipTests
+        run: ./mvnw package -DskipTests --batch-mode --no-transfer-progress
