@@ -7,6 +7,11 @@ version: "3"
 
 vars:
   MVN_OPTS: --batch-mode --no-transfer-progress --quiet
+  SUREFIRE_JVM_OPTS: >-
+    --enable-native-access=ALL-UNNAMED
+    -XX:+EnableDynamicAgentLoading
+    --sun-misc-unsafe-memory-access=allow
+    -Xshare:off
 
 tasks:
   test:
@@ -18,47 +23,38 @@ tasks:
       - test:understand-temporal-integration-with-spring-boot
       - test:testing
 
-  # --- applying-best-practices ---
+  _test:
+    internal: true
+    dir: "{{.SOLUTION}}/solution"
+    cmds:
+      - ./mvnw test {{.MVN_OPTS}} -DargLine="{{.SUREFIRE_JVM_OPTS}}" > /dev/null 2>&1
 
   test:applying-best-practices:
     desc: Test applying-best-practices solution
-    dir: applying-best-practices/solution
-    silent: true
     cmds:
-      - ./mvnw test {{.MVN_OPTS}}
-
-  # --- introduce-interceptors ---
+      - task: _test
+        vars: { SOLUTION: applying-best-practices }
 
   test:introduce-interceptors:
     desc: Test introduce-interceptors solution
-    dir: introduce-interceptors/solution
-    silent: true
     cmds:
-      - ./mvnw test {{.MVN_OPTS}}
-
-  # --- use-interceptor-to-handle-auth-failure ---
+      - task: _test
+        vars: { SOLUTION: introduce-interceptors }
 
   test:use-interceptor-to-handle-auth-failure:
     desc: Test use-interceptor-to-handle-auth-failure solution
-    dir: use-interceptor-to-handle-auth-failure/solution
-    silent: true
     cmds:
-      - ./mvnw test {{.MVN_OPTS}}
-
-  # --- understand-temporal-integration-with-spring-boot ---
+      - task: _test
+        vars: { SOLUTION: use-interceptor-to-handle-auth-failure }
 
   test:understand-temporal-integration-with-spring-boot:
     desc: Test understand-temporal-integration-with-spring-boot solution
-    dir: understand-temporal-integration-with-spring-boot/solution
-    silent: true
     cmds:
-      - ./mvnw test {{.MVN_OPTS}}
-
-  # --- testing ---
+      - task: _test
+        vars: { SOLUTION: understand-temporal-integration-with-spring-boot }
 
   test:testing:
     desc: Test testing solution
-    dir: testing/solution
-    silent: true
     cmds:
-      - ./mvnw test {{.MVN_OPTS}}
+      - task: _test
+        vars: { SOLUTION: testing }
