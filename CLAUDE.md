@@ -115,3 +115,6 @@ not shared with the team.
   tests: `temporal server start-dev`
 - Each exercise is independent — do not create
   shared parent POMs or cross-exercise dependencies
+- Avoid compound shell commands (`;`, `&&`, `|`)
+  in Bash tool calls — each command requires its
+  own permission approval
