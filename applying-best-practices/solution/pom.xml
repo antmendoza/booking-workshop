@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>io.temporal.workshops.springboot</groupId>
-    <artifactId>applying-best-practices-solution</artifactId>
+    <artifactId>temporal-best-practices-solution</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Temporal Workshop :: Applying Best Practices :: Solution</name>
+    <name>Temporal x Spring Boot Workshop :: Best Practices :: Solution</name>
 
     <properties>
         <java.version>21</java.version>

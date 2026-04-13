@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>io.temporal.workshops.springboot</groupId>
-    <artifactId>introduce-interceptors-solution</artifactId>
+    <artifactId>temporal-interceptors-solution</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Temporal Workshop :: Introduce Interceptors :: Solution</name>
+    <name>Temporal x Spring Boot Workshop :: Interceptors :: Solution</name>
 
     <properties>
         <java.version>21</java.version>

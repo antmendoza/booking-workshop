@@ -11,11 +11,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.example</groupId>
-    <artifactId>temporal-hello-world</artifactId>
+    <groupId>io.temporal.workshops.springboot</groupId>
+    <artifactId>temporal-workflow-exercise</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>temporal-hello-world</name>
-    <description>Temporal workshop</description>
+    <name>Temporal x Spring Boot Workshop :: Workflow :: Exercise</name>
 
 
     <properties>
