@@ -29,7 +29,7 @@ Metrics are available at [http://localhost:8080/actuator/prometheus](http://loca
 
 ### Running with the Hello World Sample
 
-Start the application with the `hello` profile to discover workflows and activities in `io.temporal.workflow.hello` and register a worker
+Start the application with the `hello` profile to discover workflows and activities in `io.temporal.workshops.springboot.hello` and register a worker
 and automatically execute the workflow on startup.
 
 
@@ -62,7 +62,7 @@ activity_retry_total{activity_type="Greet",...,workflow_run_id="019d5920-4e44-76
 
 ```
 
-For a detailed see the [Interceptor Metric README](src/main/java/io/temporal/workflow/interceptor/metric/README.md).
+For a detailed see the [Interceptor Metric README](src/main/java/io/integration/workflow/interceptor/metric/README.md).
 
 ### Running with the Interceptor with Local Activity Authentication Sample
 
@@ -73,7 +73,7 @@ and automatically execute the workflow on startup.
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=interceptor-localactivity-auth
 ```
 
-For a detailed see the [Interceptor Local Activity Auth README](src/main/java/io/temporal/workflow/interceptor/localactivity/auth/README.md).
+For a detailed see the [Interceptor Local Activity Auth README](src/main/java/io/integration/workflow/interceptor/localactivity/auth/README.md).
 
 
 
