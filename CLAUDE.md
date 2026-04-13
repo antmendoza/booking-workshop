@@ -8,8 +8,8 @@ See [README.md](README.md) for full documentation.
 ## Tech stack
 
 - Java 21
-- Spring Boot 3.5
-- Temporal Java SDK 1.32
+- Spring Boot 4.0
+- Temporal Java SDK 1.34
 - Maven (wrapper per exercise)
 
 ## Build & run
