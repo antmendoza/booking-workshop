@@ -1,0 +1,211 @@
+# Understand Temporal Integration with Spring Boot
+
+Without the Spring Boot integration, using
+Temporal requires manually creating a
+`WorkerFactory`, registering workflow and activity
+implementations, and starting the worker yourself.
+This works, but it is boilerplate that Spring Boot
+can handle for you.
+
+In this exercise you will replace all of that
+manual setup with the Temporal Spring Boot starter,
+which auto-discovers and registers workflows and
+activities at startup through classpath scanning.
+
+## Objective
+
+Build a Spring Boot application that:
+
+- Connects to a local Temporal server
+- Auto-discovers workflow and activity
+  implementations via annotations
+- Registers a worker on a task queue without
+  any manual `WorkerFactory` code
+
+## Prerequisites
+
+- Java 21
+- A local Temporal server running:
+
+```bash
+temporal server start-dev
+```
+
+- Familiarity with Temporal workflows and
+  activities (interfaces, implementations, task
+  queues)
+
+## Steps
+
+### Step 1 -- Explore the project
+
+Open the `exercise/` directory. A scaffolded
+Spring Boot project is already provided with
+the essential pieces in place:
+
+- **`pom.xml`** includes the
+  `temporal-spring-boot-starter` dependency.
+  This single dependency replaces the plain
+  Temporal Java SDK -- it brings in the SDK
+  plus Spring Boot auto-configuration for
+  workers, clients, and annotation-based
+  registration.
+
+- **`application.yaml`** configures the
+  Temporal server connection and sets
+  `workersAutoDiscovery.packages` to
+  `io.temporal`. This property tells the
+  starter which packages to scan for
+  `@WorkflowImpl` and `@ActivityImpl`
+  annotations -- replacing manual
+  `WorkerFactory` and `worker.registerXxx()`
+  calls entirely.
+
+- **`Application.java`** is the standard
+  Spring Boot entry point annotated with
+  `@SpringBootApplication`.
+
+Look at the `hello` package -- it is empty
+for now. This is where you will write your
+workflow and activity code in the next steps.
+
+### Step 2 -- Define the workflow interface
+
+Create a `HelloWorkflow` interface and annotate
+it with `@WorkflowInterface`. Add a single method
+annotated with `@WorkflowMethod` -- this is the
+entry point for the workflow.
+
+Define a task queue name as a constant on the
+interface (e.g. `TASK_QUEUE = "HelloTaskQueue"`).
+Both the workflow and activity implementations
+will reference this constant so the task queue
+name stays consistent.
+
+**Annotations to use:**
+
+- `@WorkflowInterface` -- marks the interface as
+  a Temporal workflow contract
+- `@WorkflowMethod` -- marks the entry point
+  method (exactly one per interface)
+
+### Step 3 -- Implement the workflow
+
+Create a `HelloWorkflowImpl` class that
+implements your workflow interface. Annotate it
+with `@WorkflowImpl(taskQueues = ...)` to
+register it with the auto-discovered worker.
+
+Two important differences from regular Spring
+code:
+
+1. **Logger** -- use `Workflow.getLogger()`
+   instead of `LoggerFactory.getLogger()`.
+   Workflow code is replayed from event history
+   on recovery. A standard logger would emit
+   duplicate log entries during replay;
+   `Workflow.getLogger()` suppresses them.
+
+2. **No `@Component`** -- Temporal creates a
+   new workflow instance for each execution (and
+   again on replay). The SDK owns the lifecycle,
+   not Spring. Making this a Spring bean would
+   produce a single shared instance, breaking
+   per-execution isolation.
+
+Inside the workflow method, create an activity
+stub using `Workflow.newActivityStub()` with
+appropriate `ActivityOptions` (set a
+`startToCloseTimeout`), then delegate the work
+to the activity.
+
+### Step 4 -- Define and implement the activity
+
+Create a `HelloActivity` interface annotated
+with `@ActivityInterface`, containing a method
+annotated with `@ActivityMethod`.
+
+Then create the implementation class
+`HelloActivityImpl` with two annotations:
+
+- `@Component` -- makes it a Spring-managed
+  bean, enabling dependency injection
+- `@ActivityImpl(taskQueues = ...)` --
+  auto-registers it with the worker
+
+Unlike workflows, activities **are** Spring
+beans. They are stateless singletons, so Spring
+can safely manage a single instance and inject
+dependencies (repositories, REST clients,
+configuration properties, etc.). This is one of
+the key advantages of the Spring Boot
+integration.
+
+Activities run as normal Java code (no replay),
+so a standard `LoggerFactory.getLogger()` is
+fine here.
+
+### Step 5 -- Run and test
+
+Start the application:
+
+```bash
+./mvnw spring-boot:run
+```
+
+You should see log output confirming the worker
+started and is polling `HelloTaskQueue`.
+
+Start a workflow execution with the Temporal CLI:
+
+```bash
+temporal workflow start \
+  --task-queue HelloTaskQueue \
+  --type HelloWorkflow \
+  --input '"Temporal"'
+```
+
+Check the result:
+
+```bash
+temporal workflow show \
+  --workflow-id <workflow-id>
+```
+
+Replace `<workflow-id>` with the ID printed by
+the `start` command. You should see the workflow
+completed with the greeting result.
+
+You can also observe the workflow execution in
+the Temporal Web UI at http://localhost:8233.
+
+## Key Takeaways
+
+- The `temporal-spring-boot-starter` dependency
+  replaces manual `WorkerFactory` and worker
+  registration code.
+
+- `workersAutoDiscovery.packages` in
+  `application.yaml` triggers classpath scanning
+  for `@WorkflowImpl` and `@ActivityImpl`
+  annotations.
+
+- Workflow implementations use `@WorkflowImpl`
+  but are **not** Spring beans -- Temporal
+  manages their lifecycle.
+
+- Activity implementations use both `@Component`
+  and `@ActivityImpl` -- Spring manages them as
+  singletons and can inject dependencies.
+
+- Use `Workflow.getLogger()` inside workflows
+  for replay-safe logging.
+
+## Resources
+
+- [Spring Boot Integration -- Temporal Java SDK](https://docs.temporal.io/develop/java/spring-boot-integration)
+
+## Solution
+
+A working solution is available in the
+`solution/` directory.
