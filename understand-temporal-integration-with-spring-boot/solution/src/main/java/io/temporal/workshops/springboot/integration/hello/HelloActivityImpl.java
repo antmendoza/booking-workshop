@@ -5,18 +5,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-// Spring bean auto-registered on HelloTaskQueue — can inject any Spring dependency
+// Spring bean with constructor injection — demonstrates DI inside a Temporal activity
 @Component
 @ActivityImpl(taskQueues = HelloWorkflow.TASK_QUEUE)
 class HelloActivityImpl implements HelloActivity {
 
-    // Standard logger — activities don't replay
     private static final Logger LOGGER =
             LoggerFactory.getLogger(HelloActivityImpl.class);
+
+    private final GreetingService greetingService;
+
+    HelloActivityImpl(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
 
     @Override
     public String greet(String name) {
         LOGGER.info("Greeting: {}", name);
-        return "Hello, " + name + "!";
+        return greetingService.buildGreeting(name);
     }
 }

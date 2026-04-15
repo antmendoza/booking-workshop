@@ -67,8 +67,9 @@ the essential pieces in place:
 
 Look at the `hello` package -- it already
 contains the workflow and activity interfaces
-(`HelloWorkflow` and `HelloActivity`). In the
-next steps you will write the implementations.
+(`HelloWorkflow` and `HelloActivity`) and a
+`GreetingService` component. In the next steps
+you will write the implementations.
 
 ### Step 2 -- Explore the workflow interface
 
@@ -117,7 +118,20 @@ appropriate `ActivityOptions` (set a
 `startToCloseTimeout`), then delegate the work
 to the activity.
 
-### Step 4 -- Explore and implement the activity
+### Step 4 -- Explore the greeting service
+
+Open `GreetingService.java` in the `hello`
+package. This is a plain Spring `@Service`
+component with a single method:
+`buildGreeting(String name)`.
+
+It contains no Temporal-specific logic -- just
+standard Spring code. You will inject it into
+the activity in the next step to demonstrate
+that Temporal activities support full Spring
+dependency injection.
+
+### Step 5 -- Explore and implement the activity
 
 Open `HelloActivity.java` in the `hello`
 package. This interface is already provided.
@@ -144,11 +158,19 @@ configuration properties, etc.). This is one of
 the key advantages of the Spring Boot
 integration.
 
+Inject `GreetingService` via constructor
+injection and delegate the greeting logic to
+`greetingService.buildGreeting(name)`. This
+demonstrates that Temporal activities are
+full Spring components that support dependency
+injection -- you can wire in any Spring bean
+just as you would in a regular service.
+
 Activities run as normal Java code (no replay),
 so a standard `LoggerFactory.getLogger()` is
 fine here.
 
-### Step 5 -- Run and test
+### Step 6 -- Run and test
 
 Start the application:
 
@@ -200,6 +222,11 @@ the Temporal Web UI at http://localhost:8233.
 - Activity implementations use both `@Component`
   and `@ActivityImpl` -- Spring manages them as
   singletons and can inject dependencies.
+
+- Activities support full Spring dependency
+  injection. The `GreetingService` example shows
+  how to inject a Spring bean into an activity
+  via constructor injection.
 
 - Use `Workflow.getLogger()` inside workflows
   for replay-safe logging.
