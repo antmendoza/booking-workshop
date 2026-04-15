@@ -80,7 +80,11 @@ Use the following agents (from the
 plugin) for all code tasks:
 
 - **code-writer** — for ANY task that writes,
-  modifies, or refactors code. No exceptions.
+  modifies, or refactors code. This includes
+  one-line fixes, import changes, visibility
+  tweaks, and adding assertions. Never use
+  the Edit or Write tools directly on source
+  files — always delegate to this agent.
 - **code-reviewer** — for read-only code review
   before merging or when investigating issues.
 
