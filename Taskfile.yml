@@ -65,3 +65,20 @@ tasks:
     cmds:
       - task: _test
         vars: { SOLUTION: testing }
+
+  temporal:start:
+    desc: Start a local Temporal dev server
+    interactive: true
+    cmds:
+      - temporal server start-dev
+
+  temporal:start:pf:
+    desc: >-
+      Start a local Temporal dev server
+      with priority and fairness enabled
+    interactive: true
+    cmds:
+      - >-
+        temporal server start-dev
+        --dynamic-config-value
+        matching.useNewMatcher=true
