@@ -1,11 +1,9 @@
 /**
- * TODO: Implement your Temporal workflow and activity here.
+ * TODO: Implement the Temporal workflow and activity.
  *
- * You need to create:
- * 1. A workflow interface (annotated with @WorkflowInterface)
- * 2. A workflow implementation (annotated with @WorkflowImpl)
- * 3. An activity interface (annotated with @ActivityInterface)
- * 4. An activity implementation (annotated with @ActivityImpl and @Component)
+ * The interfaces are provided. You need to create:
+ * 1. A workflow implementation (annotated with @WorkflowImpl)
+ * 2. An activity implementation (annotated with @ActivityImpl and @Component)
  *
  * Refer to the exercise README for step-by-step instructions.
  */

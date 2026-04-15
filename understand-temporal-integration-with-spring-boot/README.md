@@ -65,29 +65,27 @@ the essential pieces in place:
   Spring Boot entry point annotated with
   `@SpringBootApplication`.
 
-Look at the `hello` package -- it is empty
-for now. This is where you will write your
-workflow and activity code in the next steps.
+Look at the `hello` package -- it already
+contains the workflow and activity interfaces
+(`HelloWorkflow` and `HelloActivity`). In the
+next steps you will write the implementations.
 
-### Step 2 -- Define the workflow interface
+### Step 2 -- Explore the workflow interface
 
-Create a `HelloWorkflow` interface and annotate
-it with `@WorkflowInterface`. Add a single method
-annotated with `@WorkflowMethod` -- this is the
-entry point for the workflow.
+Open `HelloWorkflow.java` in the `hello`
+package. This interface is already provided.
 
-Define a task queue name as a constant on the
-interface (e.g. `TASK_QUEUE = "HelloTaskQueue"`).
-Both the workflow and activity implementations
-will reference this constant so the task queue
-name stays consistent.
-
-**Annotations to use:**
+Notice the key elements:
 
 - `@WorkflowInterface` -- marks the interface as
-  a Temporal workflow contract
+  a Temporal workflow contract.
 - `@WorkflowMethod` -- marks the entry point
-  method (exactly one per interface)
+  method (exactly one per interface).
+- A task queue constant
+  (`TASK_QUEUE = "HelloTaskQueue"`) defined on
+  the interface. Both the workflow and activity
+  implementations will reference this constant so
+  the task queue name stays consistent.
 
 ### Step 3 -- Implement the workflow
 
@@ -119,13 +117,18 @@ appropriate `ActivityOptions` (set a
 `startToCloseTimeout`), then delegate the work
 to the activity.
 
-### Step 4 -- Define and implement the activity
+### Step 4 -- Explore and implement the activity
 
-Create a `HelloActivity` interface annotated
-with `@ActivityInterface`, containing a method
-annotated with `@ActivityMethod`.
+Open `HelloActivity.java` in the `hello`
+package. This interface is already provided.
+Notice the annotations:
 
-Then create the implementation class
+- `@ActivityInterface` -- marks the interface as
+  a Temporal activity contract.
+- `@ActivityMethod` -- marks the method that the
+  workflow will invoke.
+
+Now create the implementation class
 `HelloActivityImpl` with two annotations:
 
 - `@Component` -- makes it a Spring-managed
