@@ -44,8 +44,8 @@ task test
 task test:<name>
 
 # Check retry metrics (requires running app)
-curl -s http://localhost:3030/actuator/prometheus \
-  | grep '^activity_retry'
+curl -s http://localhost:3030/actuator/prometheus
+# Then search the output for activity_retry lines.
 ```
 
 ## Modules
@@ -126,8 +126,11 @@ not shared with the team.
 - Each exercise is independent — do not create
   shared parent POMs or cross-exercise dependencies
 - Never use compound shell commands (`;`, `&&`,
-  `|`) in Bash tool calls. Each command must be
-  a separate Bash tool call. Common violations
-  to watch for: `grep ... | head`, `cd ... &&
-  cmd`. Split every pipeline or chain into
-  individual calls.
+  `|`) in Bash tool calls — this applies to
+  every Bash tool invocation Claude makes during
+  a conversation, not just code in documentation.
+  Each command must be a separate Bash tool call.
+  Common violations to watch for: `cd dir &&
+  ./mvnw test`, `curl ... | grep ...`,
+  `./mvnw test 2>&1 | tail -20`. Split every
+  pipeline or chain into individual calls.
