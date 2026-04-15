@@ -128,7 +128,7 @@ spring:
     workers:
       - task-queue: BookingTaskQueue
         capacity:
-          max-concurrent-activity-execution-size: 1
+          max-concurrent-activity-executors: 1
 ```
 
 This is essential: priority only affects tasks
