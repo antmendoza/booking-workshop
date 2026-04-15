@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 @ActivityImpl(taskQueues = BookingWorkflow.TASK_QUEUE)
 class BookingActivityImpl implements BookingActivity {
 
-    private static final Logger log = LoggerFactory.getLogger(BookingActivityImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingActivityImpl.class);
 
     @Override
     public void validateBooking(BookingRequest request) {
-        log.info("[priority={}] Validating booking {} for {} at {}",
+        LOGGER.info("[priority={}] Validating booking {} for {} at {}",
                 request.priority(), request.bookingId(), request.customerName(), request.hotelName());
         try {
             Thread.sleep(500);
@@ -24,7 +24,7 @@ class BookingActivityImpl implements BookingActivity {
 
     @Override
     public String confirmBooking(BookingRequest request) {
-        log.info("[priority={}] Confirming booking {} for {} at {}",
+        LOGGER.info("[priority={}] Confirming booking {} for {} at {}",
                 request.priority(), request.bookingId(), request.customerName(), request.hotelName());
         return "Booking " + request.bookingId() + " confirmed for "
                 + request.customerName() + " at " + request.hotelName();

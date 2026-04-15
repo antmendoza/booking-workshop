@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 @RestController
 class BookingController {
 
-    private static final Logger log = LoggerFactory.getLogger(BookingController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingController.class);
 
     private final WorkflowClient workflowClient;
 
@@ -54,7 +54,7 @@ class BookingController {
             submissionOrder.add(request);
         }
 
-        log.info("All {} workflows submitted. Streaming completions...", stubs.size());
+        LOGGER.info("All {} workflows submitted. Streaming completions...", stubs.size());
 
         // Write submission order immediately
         writeLine(out, response, "=== SUBMISSION ORDER (random) ===");
@@ -129,7 +129,7 @@ class BookingController {
                         .build());
 
         WorkflowClient.start(workflow::processBooking, request);
-        log.info("[priority={}] Started workflow {} [fairness={}]",
+        LOGGER.info("[priority={}] Started workflow {} [fairness={}]",
                 request.priority(), workflowId, request.hotelName());
 
         return WorkflowStub.fromTyped(workflow);

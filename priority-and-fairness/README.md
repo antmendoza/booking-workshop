@@ -49,7 +49,7 @@ fairness prevents starvation across tenants.
 A positive integer from 1 to 5. Lower values
 mean higher priority. The default is 3.
 
-```
+```text
 Priority 1  ->  Highest (urgent / VIP)
 Priority 3  ->  Normal  (default)
 Priority 5  ->  Lowest  (batch / idle)
@@ -179,11 +179,21 @@ priority-aware task dispatcher enabled:
 ```bash
 temporal server start-dev \
     --dynamic-config-value \
-    matching.useNewMatcher=true
+    matching.useNewMatcher=true \
+    --dynamic-config-value \
+    matching.enableFairness=true \
+    --dynamic-config-value \
+    matching.enableMigration=true
 ```
 
-Without this flag, tasks are dispatched in
-FIFO order regardless of priority settings.
+The `matching.useNewMatcher` flag enables the
+new task dispatcher required for priority
+ordering (Step 3). The `matching.enableFairness`
+and `matching.enableMigration` flags enable
+fair-share scheduling across tenants (Step 4).
+Without these flags, tasks are dispatched in
+FIFO order regardless of priority and fairness
+settings.
 
 In a separate terminal, start the application:
 
@@ -334,7 +344,9 @@ running Temporal server is needed.
 
 - Priority and fairness require the new
   task dispatcher, enabled with
-  `matching.useNewMatcher=true` on the
+  `matching.useNewMatcher=true`,
+  `matching.enableFairness=true`, and
+  `matching.enableMigration=true` on the
   Temporal server.
 
 ## Resources

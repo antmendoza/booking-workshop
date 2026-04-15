@@ -10,7 +10,7 @@ import java.time.Duration;
 @WorkflowImpl(taskQueues = BookingWorkflow.TASK_QUEUE)
 class BookingWorkflowImpl implements BookingWorkflow {
 
-    private static final Logger log = Workflow.getLogger(BookingWorkflowImpl.class);
+    private static final Logger LOGGER = Workflow.getLogger(BookingWorkflowImpl.class);
 
     private final BookingActivity bookingActivity = Workflow.newActivityStub(
             BookingActivity.class,
@@ -20,13 +20,13 @@ class BookingWorkflowImpl implements BookingWorkflow {
 
     @Override
     public String processBooking(BookingRequest request) {
-        log.info("Processing booking {} for {} at {}",
+        LOGGER.info("Processing booking {} for {} at {}",
                 request.bookingId(), request.customerName(), request.hotelName());
 
         bookingActivity.validateBooking(request);
         String confirmation = bookingActivity.confirmBooking(request);
 
-        log.info("Booking {} completed: {}", request.bookingId(), confirmation);
+        LOGGER.info("Booking {} completed: {}", request.bookingId(), confirmation);
         return confirmation;
     }
 }

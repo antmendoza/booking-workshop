@@ -214,7 +214,6 @@ temporal workflow show \
     -w <workflowId> --output json \
     > hello-workflow-history.json
 ```
-
 This test does not use `@SpringBootTest` —
 replaying a history file is a pure SDK
 operation that only needs the workflow
