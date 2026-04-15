@@ -14,13 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class HelloWorkflowReplayTest {
 
-    // Replay testing verifies that changes to workflow
-    // code are backwards-compatible with already-running
-    // executions. The test replays a recorded workflow
-    // history against the current workflow
-    // implementation. If the code has changed in a
-    // non-deterministic way, the replay will fail.
-
     // TODO: Inject the WorkflowClient using @Autowired.
 
     @Test

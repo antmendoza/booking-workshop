@@ -5,14 +5,7 @@ import org.junit.jupiter.api.Test;
 
 class HelloWorkflowReplayFromFileTest {
 
-    // This test replays a workflow execution from a
-    // JSON history file. In production, you would
-    // export the history using the Temporal CLI:
-    //   temporal workflow show \
-    //       -w <workflowId> --output json \
-    //       > hello-workflow-history.json
-    // The file is already provided in
-    // src/test/resources/.
+    // Export history with: temporal workflow show -w <workflowId> --output json
 
     @Test
     void replayFromJsonFile() throws Exception {

@@ -337,10 +337,6 @@ Revert your changes to `HelloActivity`,
   programmatically or from JSON files
   exported with the Temporal CLI.
 
-- Use `Workflow.getLogger()` in workflows
-  even in tests — the test environment
-  handles replay-safe logging.
-
 ## Resources
 
 - [Testing — Temporal Java SDK](https://docs.temporal.io/develop/java/testing-suite)

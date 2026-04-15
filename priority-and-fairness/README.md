@@ -358,10 +358,7 @@ each endpoint in sequence:
 > application between runs to avoid workflow
 > ID collisions.
 
-### Step 7 — Review the key takeaways
-
-Before moving on, make sure you understand
-the following:
+## Key Takeaways
 
 1. **Priority key** (1–5) controls strict
    execution order. Lower = higher priority.
