@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -51,7 +52,7 @@ class BookingController {
         List<WorkflowStub> stubs = new ArrayList<>();
 
         for (BookingRequest request : requests) {
-            stubs.add(submitBooking(request));
+            stubs.add(submitBooking(request, "booking-", 1.0f));
             submissionOrder.add(request);
         }
 
@@ -102,8 +103,164 @@ class BookingController {
         response.flushBuffer();
     }
 
-    private WorkflowStub submitBooking(BookingRequest request) {
-        String workflowId = "booking-" + request.bookingId();
+    @PostMapping("/bookings/start-fairness")
+    void startFairness(HttpServletResponse response)
+            throws IOException, InterruptedException {
+        response.setContentType("text/plain;charset=UTF-8");
+
+        var out = response.getOutputStream();
+
+        // Build all booking requests — all at priority 3
+        List<BookingRequest> requests = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            requests.add(new BookingRequest(
+                    "LR-%03d".formatted(i), "VIP Guest " + i, "Luxury Resort", 3));
+            requests.add(new BookingRequest(
+                    "CH-%03d".formatted(i), "Guest " + i, "City Hotel", 3));
+            requests.add(new BookingRequest(
+                    "BI-%03d".formatted(i), "Traveler " + i, "Budget Inn", 3));
+        }
+
+        Collections.shuffle(requests);
+
+        List<BookingRequest> submissionOrder = new ArrayList<>();
+        List<WorkflowStub> stubs = new ArrayList<>();
+
+        for (BookingRequest request : requests) {
+            stubs.add(submitBooking(request, "fair-", 1.0f));
+            submissionOrder.add(request);
+        }
+
+        LOGGER.info("All {} workflows submitted. Streaming completions...",
+                stubs.size());
+
+        writeLine(out, response,
+                "=== FAIRNESS DEMO — equal weights, same priority ===");
+        writeLine(out, response, "");
+        for (int i = 0; i < submissionOrder.size(); i++) {
+            BookingRequest r = submissionOrder.get(i);
+            writeLine(out, response,
+                    "  %2d. [fairness=%-14s] fair-%s".formatted(
+                            i + 1, r.hotelName(), r.bookingId()));
+        }
+        writeLine(out, response, "");
+        writeLine(out, response,
+                "=== COMPLETION ORDER (expect interleaving) ===");
+        writeLine(out, response, "");
+
+        record CompletedBooking(String workflowId, BookingRequest request) {}
+        BlockingQueue<CompletedBooking> completions =
+                new LinkedBlockingQueue<>();
+
+        for (int i = 0; i < stubs.size(); i++) {
+            WorkflowStub stub = stubs.get(i);
+            BookingRequest request = submissionOrder.get(i);
+            Thread.startVirtualThread(() -> {
+                stub.getResult(String.class);
+                completions.add(new CompletedBooking(
+                        stub.getExecution().getWorkflowId(), request));
+            });
+        }
+
+        for (int i = 0; i < stubs.size(); i++) {
+            CompletedBooking c = completions.take();
+            writeLine(out, response,
+                    "  %2d. [fairness=%-14s] %-16s".formatted(
+                            i + 1, c.request().hotelName(),
+                            c.workflowId()));
+        }
+
+        writeLine(out, response, "");
+        writeLine(out, response,
+                "%d workflows completed.".formatted(stubs.size()));
+    }
+
+    @PostMapping("/bookings/start-weighted")
+    void startWeighted(HttpServletResponse response)
+            throws IOException, InterruptedException {
+        response.setContentType("text/plain;charset=UTF-8");
+
+        var out = response.getOutputStream();
+
+        Map<String, Float> weightByHotel = Map.of(
+                "Luxury Resort", 3.0f,
+                "City Hotel", 1.0f,
+                "Budget Inn", 1.0f);
+
+        // Build all booking requests — all at priority 3
+        List<BookingRequest> requests = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            requests.add(new BookingRequest(
+                    "LR-%03d".formatted(i), "VIP Guest " + i, "Luxury Resort", 3));
+            requests.add(new BookingRequest(
+                    "CH-%03d".formatted(i), "Guest " + i, "City Hotel", 3));
+            requests.add(new BookingRequest(
+                    "BI-%03d".formatted(i), "Traveler " + i, "Budget Inn", 3));
+        }
+
+        Collections.shuffle(requests);
+
+        List<BookingRequest> submissionOrder = new ArrayList<>();
+        List<WorkflowStub> stubs = new ArrayList<>();
+
+        for (BookingRequest request : requests) {
+            float weight = weightByHotel.get(request.hotelName());
+            stubs.add(submitBooking(request, "weighted-", weight));
+            submissionOrder.add(request);
+        }
+
+        LOGGER.info("All {} workflows submitted. Streaming completions...",
+                stubs.size());
+
+        writeLine(out, response,
+                "=== WEIGHTED FAIRNESS — Luxury Resort 3x weight ===");
+        writeLine(out, response, "");
+        for (int i = 0; i < submissionOrder.size(); i++) {
+            BookingRequest r = submissionOrder.get(i);
+            float w = weightByHotel.get(r.hotelName());
+            writeLine(out, response,
+                    "  %2d. [fairness=%-14s, weight=%.1f] weighted-%s"
+                            .formatted(i + 1, r.hotelName(), w,
+                                    r.bookingId()));
+        }
+        writeLine(out, response, "");
+        writeLine(out, response,
+                "=== COMPLETION ORDER (expect Luxury Resort ~3x more often) ===");
+        writeLine(out, response, "");
+
+        record CompletedBooking(String workflowId, BookingRequest request) {}
+        BlockingQueue<CompletedBooking> completions =
+                new LinkedBlockingQueue<>();
+
+        for (int i = 0; i < stubs.size(); i++) {
+            WorkflowStub stub = stubs.get(i);
+            BookingRequest request = submissionOrder.get(i);
+            Thread.startVirtualThread(() -> {
+                stub.getResult(String.class);
+                completions.add(new CompletedBooking(
+                        stub.getExecution().getWorkflowId(), request));
+            });
+        }
+
+        for (int i = 0; i < stubs.size(); i++) {
+            CompletedBooking c = completions.take();
+            float weightForHotel =
+                    weightByHotel.get(c.request().hotelName());
+            writeLine(out, response,
+                    "  %2d. [fairness=%-14s, weight=%.1f] %-20s".formatted(
+                            i + 1, c.request().hotelName(),
+                            weightForHotel, c.workflowId()));
+        }
+
+        writeLine(out, response, "");
+        writeLine(out, response,
+                "%d workflows completed.".formatted(stubs.size()));
+    }
+
+    private WorkflowStub submitBooking(
+            BookingRequest request, String idPrefix,
+            float fairnessWeight) {
+        String workflowId = idPrefix + request.bookingId();
 
         var workflow = workflowClient.newWorkflowStub(
                 BookingWorkflow.class,
@@ -113,13 +270,15 @@ class BookingController {
                         .setPriority(Priority.newBuilder()
                                 .setPriorityKey(request.priority())
                                 .setFairnessKey(request.hotelName())
-                                .setFairnessWeight(1.0f)
+                                .setFairnessWeight(fairnessWeight)
                                 .build())
                         .build());
 
         WorkflowClient.start(workflow::processBooking, request);
-        LOGGER.info("[priority={}] Started workflow {} [fairness={}]",
-                request.priority(), workflowId, request.hotelName());
+        LOGGER.info(
+                "[priority={}] Started workflow {} [fairness={}, weight={}]",
+                request.priority(), workflowId, request.hotelName(),
+                fairnessWeight);
 
         return WorkflowStub.fromTyped(workflow);
     }

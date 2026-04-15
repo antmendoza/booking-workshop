@@ -28,10 +28,11 @@ fairness prevents starvation across tenants.
   control execution order
 - Set fairness keys and weights to balance
   work across tenants
-- Observe priority ordering and fair scheduling
-  through worker logs
-- Write tests that exercise workflows with
-  different priority levels
+- Observe priority ordering through worker logs
+- Observe fair-share interleaving across tenants
+  at the same priority level
+- Observe proportional dispatch with unequal
+  fairness weights
 
 ## Prerequisites
 
@@ -147,19 +148,34 @@ The `POST /bookings/start` endpoint submits
 | City Hotel    | CH-    | 3        | 5     |
 | Budget Inn    | BI-    | 5 (low)  | 5     |
 
+The controller also exposes two additional
+endpoints that you will use in later steps:
+
+- `POST /bookings/start-fairness` — submits
+  the same 15 bookings, all at priority 3,
+  with equal fairness weights (1.0)
+- `POST /bookings/start-weighted` — submits
+  the same 15 bookings, all at priority 3,
+  with Luxury Resort at weight 3.0 and the
+  other two hotels at weight 1.0
+
 ### Step 2 — Add priority to the controller
 
 Open `BookingController.java`. The
 `submitBooking` method creates
 `WorkflowOptions` but does not yet set a
-priority. Find the TODO and add the priority
+priority. The method signature is
+`submitBooking(request, idPrefix,
+fairnessWeight)` — the `fairnessWeight`
+parameter is already wired in from each
+endpoint. Find the TODO and add the priority
 configuration:
 
 1. Import `io.temporal.common.Priority`
 2. Build a `Priority` with:
    - `priorityKey` from `request.priority()`
    - `fairnessKey` from `request.hotelName()`
-   - `fairnessWeight` of `1.0f`
+   - `fairnessWeight` from the method parameter
 3. Pass it to `WorkflowOptions` using
    `.setPriority(...)`
 
@@ -167,9 +183,15 @@ configuration:
 .setPriority(Priority.newBuilder()
         .setPriorityKey(request.priority())
         .setFairnessKey(request.hotelName())
-        .setFairnessWeight(1.0f)
+        .setFairnessWeight(fairnessWeight)
         .build())
 ```
+
+Note that `fairnessWeight` comes from the
+method parameter, not a hardcoded value. This
+lets each endpoint pass a different weight
+without duplicating the workflow submission
+logic.
 
 ### Step 3 — Run and observe priority ordering
 
@@ -242,112 +264,121 @@ single-activity concurrency limit creates a
 clear sequential execution where the priority
 ordering is unmistakable.
 
-### Step 4 — Observe fairness within a priority
+### Step 4 — Observe fair-share interleaving
 
-Now let's see fairness in action. Edit
-`BookingController.java` to submit all 15
-bookings at the **same** priority level (3),
-but keep the different `fairnessKey` values
-(`"Luxury Resort"`, `"City Hotel"`,
-`"Budget Inn"`):
-
-```java
-.setPriority(Priority.newBuilder()
-        .setPriorityKey(3)
-        .setFairnessKey(request.hotelName())
-        .setFairnessWeight(1.0f)
-        .build())
-```
-
-Restart the application and trigger the batch
-again with `curl`. With equal weights, each
-tenant gets roughly equal dispatch throughput
-— you should see bookings from all three
-hotels interleaved, rather than one hotel's
-entire backlog processed before the next.
-
-Try changing the weight for one tenant (e.g.
-`"Luxury Resort"` at weight 3.0) and observe
-that it gets dispatched proportionally more
-often.
-
-### Step 5 — Write the integration test
-
-Open `BookingWorkflowTest.java`. The test
-class is already set up with `@SpringBootTest`
-and `@ActiveProfiles("test")`.
-
-1. Create a `WorkflowOptions` with task queue
-   `BookingWorkflow.TASK_QUEUE` and a
-   `Priority` (priorityKey=1,
-   fairnessKey="test-hotel",
-   fairnessWeight=1.0f)
-2. Create a `BookingRequest` with
-   bookingId="TEST-001", customerName="Alice",
-   hotelName="test-hotel", priority=1
-3. Call `workflow.processBooking(request)` and
-   assert the result equals
-   `"Booking TEST-001 confirmed for Alice at test-hotel"`
-
-### Step 6 — Write the multi-priority test
-
-Open `BookingWorkflowPriorityTest.java`. This
-test starts workflows at different priority
-levels and verifies they all complete.
-
-For each priority level (1, 3, 5), start 2
-workflows asynchronously:
-
-1. Build `WorkflowOptions` with the priority
-   key, a fairness key based on the hotel name,
-   and a unique workflow ID
-2. Use `WorkflowClient.start(workflow::processBooking, request)`
-   for async execution
-3. Track each `WorkflowStub` in a list
-4. After starting all 6 workflows, iterate
-   through the stubs and call
-   `stub.getResult(String.class)` to verify
-   each one completed
-
-### Step 7 — Run the tests
+Now that the `Priority` is wired into
+`submitBooking`, the fairness endpoint is
+ready to use. Trigger it:
 
 ```bash
-./mvnw test
+curl -XPOST \
+    http://localhost:8080/bookings/start-fairness
 ```
 
-Both tests should pass. The test environment
-uses the in-memory Temporal test server — no
-running Temporal server is needed.
+This endpoint submits the same 15 bookings but
+**all at priority 3**. With equal fairness
+weights (1.0) and different fairness keys (one
+per hotel name), the Temporal task dispatcher
+distributes work proportionally across the
+three hotels.
 
-## Key Takeaways
+Watch the application logs. Instead of one
+hotel's entire backlog being processed before
+the next, you should see bookings from all
+three hotels **interleave** in the completion
+stream.
 
-- **Priority key** (1–5) controls strict
-  execution order within a task queue. Lower
-  numbers run first. Default is 3.
+Contrast this with Step 3: without fairness
+(different priorities), all priority-1 bookings
+ran first. With fairness (same priority), the
+dispatcher round-robins across hotels so that
+no single tenant monopolises the worker.
 
-- **Fairness key** groups tasks into virtual
-  queues with round-robin dispatch proportional
-  to their weight. It prevents one tenant or
-  workload type from starving others.
+> **Note:** Fairness distributes work
+> proportionally — it does not guarantee
+> strict alternation. With equal weights you
+> should see roughly equal throughput across
+> the three hotels, but the exact interleaving
+> may vary between runs.
 
-- Priority is checked first, then fairness
-  distributes work within the same priority
-  level.
+### Step 5 — Observe weighted fairness
 
-- Activities and child workflows **inherit**
-  priority from their parent workflow unless
-  explicitly overridden.
+Trigger the weighted endpoint:
 
-- Both features work on a **single task queue**
-  — no need to create separate queues per
-  priority or tenant.
+```bash
+curl -XPOST \
+    http://localhost:8080/bookings/start-weighted
+```
 
-- Priority and fairness require the new
-  task dispatcher, enabled with
-  `matching.useNewMatcher=true`,
-  `matching.enableFairness=true`, and
-  `matching.enableMigration=true` on the
-  Temporal server.
+This endpoint gives Luxury Resort a weight of
+3.0 while City Hotel and Budget Inn stay at
+1.0. The dispatcher should give Luxury Resort
+roughly 3x the throughput.
+
+Watch the logs: Luxury Resort bookings appear
+more frequently in the completion stream —
+roughly 3 out of every 5 completions should
+belong to Luxury Resort.
+
+> **Note:** The weighting is approximate,
+> especially with small batch sizes. With 15
+> bookings and a single-activity worker, the
+> proportional effect is visible but not
+> perfectly 3:1 on every run.
+
+### Step 6 — Restart and test all three endpoints
+
+For a clean comparison of the three behaviours
+side by side, restart the application and run
+each endpoint in sequence:
+
+1. Priority ordering:
+
+   ```bash
+   curl -XPOST \
+       http://localhost:8080/bookings/start
+   ```
+
+2. Fair-share interleaving:
+
+   ```bash
+   curl -XPOST \
+       http://localhost:8080/bookings/start-fairness
+   ```
+
+3. Weighted dispatch:
+
+   ```bash
+   curl -XPOST \
+       http://localhost:8080/bookings/start-weighted
+   ```
+
+> **Tip:** Wait for each batch to complete
+> before starting the next, or restart the
+> application between runs to avoid workflow
+> ID collisions.
+
+### Step 7 — Review the key takeaways
+
+Before moving on, make sure you understand
+the following:
+
+1. **Priority key** (1–5) controls strict
+   execution order. Lower = higher priority.
+   Default is 3.
+2. **Fairness key** groups tasks into virtual
+   queues. Work is dispatched proportionally
+   to weight.
+3. Priority is checked first, then fairness
+   distributes within the same priority level.
+4. Activities and child workflows **inherit**
+   priority unless explicitly overridden.
+5. Both features work on a **single task
+   queue** — no separate queues needed.
+6. Priority and fairness require the new task
+   dispatcher (`matching.useNewMatcher=true`,
+   `matching.enableFairness=true`,
+   `matching.enableMigration=true`).
 
 ## Resources
 
