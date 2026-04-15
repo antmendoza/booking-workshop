@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: temporal-priority-and-fairness
+
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    workersAutoDiscovery:
+      packages: io.temporal
+    workers:
+      - task-queue: BookingTaskQueue
+        capacity:
+          max-concurrent-activity-executors: 1

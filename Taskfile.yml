@@ -19,6 +19,7 @@ tasks:
     deps:
       - test:applying-best-practices
       - test:introduce-interceptors
+      - test:priority-and-fairness
       - test:use-interceptor-to-handle-auth-failure
       - test:understand-temporal-integration-with-spring-boot
       - test:testing
@@ -52,6 +53,12 @@ tasks:
     cmds:
       - task: _test
         vars: { SOLUTION: understand-temporal-integration-with-spring-boot }
+
+  test:priority-and-fairness:
+    desc: Test priority-and-fairness solution
+    cmds:
+      - task: _test
+        vars: { SOLUTION: priority-and-fairness }
 
   test:testing:
     desc: Test testing solution
