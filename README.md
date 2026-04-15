@@ -29,7 +29,7 @@ session.
 Start a local Temporal server:
 
 ```bash
-temporal server start-dev
+task temporal:start
 ```
 
 The server listens on `127.0.0.1:7233` with a
