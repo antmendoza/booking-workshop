@@ -37,11 +37,30 @@ fairness prevents starvation across tenants.
 ## Prerequisites
 
 - Java 21
-- Temporal CLI (`temporal server start-dev`)
+- [Temporal CLI](https://docs.temporal.io/cli)
 - Familiarity with Temporal workflows and
   activities (interfaces, implementations,
   task queues)
 - Familiarity with Spring Boot basics
+
+Start a local Temporal server with priority
+and fairness support enabled:
+
+```bash
+task temporal:start
+```
+
+Or, without [Task](https://taskfile.dev):
+
+```bash
+temporal server start-dev \
+    --dynamic-config-value \
+    matching.useNewMatcher=true \
+    --dynamic-config-value \
+    matching.enableFairness=true \
+    --dynamic-config-value \
+    matching.enableMigration=true
+```
 
 ## Key Concepts
 
