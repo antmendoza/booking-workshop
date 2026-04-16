@@ -136,9 +136,8 @@ class BookingController {
 
         List<WorkflowStub> stubs = new ArrayList<>();
         for (BookingRequest request : requests) {
-            // TODO: Make sure you implement Priority in submitBooking
-            //       first — this endpoint relies on fairness keys to
-            //       demonstrate interleaving across hotels.
+            // Note: This endpoint relies on Priority in submitBooking
+            //       to use fairness keys for interleaving across hotels.
             stubs.add(submitBooking(request, "fair-", 1.0f));
         }
 
@@ -218,10 +217,9 @@ class BookingController {
         List<WorkflowStub> stubs = new ArrayList<>();
         for (BookingRequest request : requests) {
             float weight = weightByHotel.get(request.hotelName());
-            // TODO: Look at how this endpoint uses different weights
-            //       per hotel. The submitBooking method receives the
-            //       weight — make sure you wire it into
-            //       Priority.newBuilder().setFairnessWeight(...)
+            // Note: This endpoint passes different weights per hotel.
+            //       The submitBooking method receives the weight and
+            //       wires it into Priority via setFairnessWeight(...).
             stubs.add(
                     submitBooking(request, "weighted-", weight));
         }
@@ -290,20 +288,13 @@ class BookingController {
             float fairnessWeight) {
         String workflowId = idPrefix + request.bookingId();
 
-        // TODO: Build WorkflowOptions with:
-        //       1. Task queue: BookingWorkflow.TASK_QUEUE
-        //       2. Workflow ID: workflowId
-        //       3. Priority with:
-        //          - priorityKey from request.priority()
-        //          - fairnessKey from request.hotelName()
-        //          - fairnessWeight from the fairnessWeight parameter
-        //
-        // Hint: Use Priority.newBuilder()
-        //           .setPriorityKey(...)
-        //           .setFairnessKey(...)
-        //           .setFairnessWeight(...)
+        // TODO: Add a Priority to the WorkflowOptions below using:
+        //       Priority.newBuilder()
+        //           .setPriorityKey(request.priority())
+        //           .setFairnessKey(request.hotelName())
+        //           .setFairnessWeight(fairnessWeight)
         //           .build()
-        //       and pass it to WorkflowOptions via .setPriority(...)
+        //       then pass it via .setPriority(...) on the builder.
         //
         // Import: io.temporal.common.Priority
         var workflow = workflowClient.newWorkflowStub(
