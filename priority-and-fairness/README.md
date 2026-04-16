@@ -135,8 +135,12 @@ Review the domain model:
 - **`BookingActivity`** — validates and
   confirms bookings with a small delay to
   make ordering visible
-- **`BookingController`** — REST endpoint
-  that submits a batch of 15 bookings
+- **`BookingService`** — submits workflows to
+  Temporal with configurable priority and
+  fairness settings
+- **`BookingController`** — REST endpoints that
+  build booking requests and stream completion
+  results
 
 Look at `application.yaml` — the worker is
 configured to process **one activity at a
@@ -178,16 +182,16 @@ endpoints that you will use in later steps:
   with Luxury Resort at weight 3.0 and the
   other two hotels at weight 1.0
 
-### Step 2 — Add priority to the controller
+### Step 2 — Add priority to the service
 
-Open `BookingController.java`. The
+Open `BookingService.java`. The
 `submitBooking` method creates
 `WorkflowOptions` but does not yet set a
 priority. The method signature is
 `submitBooking(request, idPrefix,
 fairnessWeight)` — the `fairnessWeight`
-parameter is already wired in from each
-endpoint. Find the TODO and add the priority
+parameter is already wired in from the
+controller. Find the TODO and add the priority
 configuration:
 
 1. Import `io.temporal.common.Priority`
