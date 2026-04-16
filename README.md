@@ -25,11 +25,25 @@ session.
 
 - Java 21
 - [Temporal CLI](https://docs.temporal.io/cli)
+- [Task](https://taskfile.dev) (optional —
+  simplifies running the server and tests)
 
 Start a local Temporal server:
 
 ```bash
 task temporal:start
+```
+
+Or, without Task:
+
+```bash
+temporal server start-dev \
+    --dynamic-config-value \
+    matching.useNewMatcher=true \
+    --dynamic-config-value \
+    matching.enableFairness=true \
+    --dynamic-config-value \
+    matching.enableMigration=true
 ```
 
 The server listens on `127.0.0.1:7233` with a
@@ -70,10 +84,10 @@ Install [Task](https://taskfile.dev), then:
 | 2  | [introduce-interceptors](introduce-interceptors/exercise/README.md)                                                     | Custom retry metrics with interceptors |
 | 3  | [use-interceptor-to-handle-auth-failure](use-interceptor-to-handle-auth-failure/exercise/README.md)                     | Auth failure handling via interceptors |
 | 4  | [applying-best-practices](applying-best-practices/exercise/README.md)                                                   | Applying best practices                |
-| 5  | [understand-temporal-integration-with-spring-boot](understand-temporal-integration-with-spring-boot/exercise/README.md) | Spring Boot integration                |
-| 6  | [testing](testing/exercise/README.md)                                                                                   | Unit testing and replay testing        |
+| 5  | [understand-temporal-integration-with-spring-boot](understand-temporal-integration-with-spring-boot/README.md)          | Spring Boot integration                |
+| 6  | [testing](testing/README.md)                                                                                            | Unit testing and replay testing        |
 | 7  | [worker-versioning](worker-versioning/exercise/README.md)                                                               | Worker versioning and migration        |
-| 8  | [priority-and-fairness](priority-and-fairness/exercise/README.md)                                                       | Priority and fair share processing     |
+| 8  | [priority-and-fairness](priority-and-fairness/README.md)                                                                | Priority and fair share processing     |
 | 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md)                                           | Saga pattern with compensation         |
 | 10 | [understanding-metrics](understanding-metrics/exercise/README.md)                                                       | Understanding metrics                  |
 | 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md)                                               | Dynamic workflows and DSL              |
