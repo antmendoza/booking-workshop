@@ -15,9 +15,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @RestController
@@ -40,7 +38,7 @@ class BookingController {
         var out = response.getOutputStream();
 
         // Build all booking requests across three tiers
-        List<BookingRequest> requests = new ArrayList<>();
+        var requests = new ArrayList<BookingRequest>();
         for (int i = 1; i <= 5; i++) {
             requests.add(new BookingRequest("LR-%03d".formatted(i), "VIP Guest " + i, "Luxury Resort", 1));
             requests.add(new BookingRequest("CH-%03d".formatted(i), "Guest " + i, "City Hotel", 3));
@@ -50,7 +48,7 @@ class BookingController {
         // Shuffle to submit in random order
         Collections.shuffle(requests);
 
-        List<WorkflowStub> stubs = new ArrayList<>();
+        var stubs = new ArrayList<WorkflowStub>();
         for (BookingRequest request : requests) {
             stubs.add(submitBooking(request, "priority-", 1.0f));
         }
@@ -70,21 +68,20 @@ class BookingController {
         writeLine(out, response, "");
 
         // Use a blocking queue to collect completions as they happen
-        BlockingQueue<CompletedBooking> completions = new LinkedBlockingQueue<>();
+        var completions = new LinkedBlockingQueue<CompletedBooking>();
 
         for (int i = 0; i < stubs.size(); i++) {
-            WorkflowStub stub = stubs.get(i);
-            BookingRequest request = requests.get(i);
-            Thread.startVirtualThread(() -> {
-                stub.getResult(String.class);
-                completions.add(new CompletedBooking(
-                        stub.getExecution().getWorkflowId(), request));
-            });
+            var stub = stubs.get(i);
+            var request = requests.get(i);
+            stub.getResultAsync(String.class).thenAccept(r ->
+                    completions.add(new CompletedBooking(
+                            stub.getExecution().getWorkflowId(),
+                            request)));
         }
 
         // Stream each completion as it arrives
         for (int i = 0; i < stubs.size(); i++) {
-            CompletedBooking c = completions.take();
+            var c = completions.take();
             writeLine(out, response, "  %2d. [priority=%d] %-18s (%s)".formatted(
                     i + 1, c.request().priority(),
                     c.workflowId(), c.request().hotelName()));
@@ -109,7 +106,7 @@ class BookingController {
         var out = response.getOutputStream();
 
         // Build all booking requests — all at priority 3
-        List<BookingRequest> requests = new ArrayList<>();
+        var requests = new ArrayList<BookingRequest>();
         for (int i = 1; i <= 5; i++) {
             requests.add(new BookingRequest(
                     "LR-%03d".formatted(i), "VIP Guest " + i, "Luxury Resort", 3));
@@ -121,7 +118,7 @@ class BookingController {
 
         Collections.shuffle(requests);
 
-        List<WorkflowStub> stubs = new ArrayList<>();
+        var stubs = new ArrayList<WorkflowStub>();
         for (BookingRequest request : requests) {
             stubs.add(submitBooking(request, "fair-", 1.0f));
         }
@@ -143,17 +140,15 @@ class BookingController {
                 "=== COMPLETION ORDER (expect interleaving) ===");
         writeLine(out, response, "");
 
-        BlockingQueue<CompletedBooking> completions =
-                new LinkedBlockingQueue<>();
+        var completions = new LinkedBlockingQueue<CompletedBooking>();
 
         for (int i = 0; i < stubs.size(); i++) {
-            WorkflowStub stub = stubs.get(i);
-            BookingRequest request = requests.get(i);
-            Thread.startVirtualThread(() -> {
-                stub.getResult(String.class);
-                completions.add(new CompletedBooking(
-                        stub.getExecution().getWorkflowId(), request));
-            });
+            var stub = stubs.get(i);
+            var request = requests.get(i);
+            stub.getResultAsync(String.class).thenAccept(r ->
+                    completions.add(new CompletedBooking(
+                            stub.getExecution().getWorkflowId(),
+                            request)));
         }
 
         for (int i = 0; i < stubs.size(); i++) {
@@ -176,13 +171,13 @@ class BookingController {
 
         var out = response.getOutputStream();
 
-        Map<String, Float> weightByHotel = Map.of(
+        var weightByHotel = Map.of(
                 "Luxury Resort", 3.0f,
                 "City Hotel", 1.0f,
                 "Budget Inn", 1.0f);
 
         // Build all booking requests — all at priority 3
-        List<BookingRequest> requests = new ArrayList<>();
+        var requests = new ArrayList<BookingRequest>();
         for (int i = 1; i <= 5; i++) {
             requests.add(new BookingRequest(
                     "LR-%03d".formatted(i), "VIP Guest " + i, "Luxury Resort", 3));
@@ -194,7 +189,7 @@ class BookingController {
 
         Collections.shuffle(requests);
 
-        List<WorkflowStub> stubs = new ArrayList<>();
+        var stubs = new ArrayList<WorkflowStub>();
         for (BookingRequest request : requests) {
             float weight = weightByHotel.get(request.hotelName());
             stubs.add(submitBooking(request, "weighted-", weight));
@@ -219,17 +214,15 @@ class BookingController {
                 "=== COMPLETION ORDER (expect Luxury Resort ~3x more often) ===");
         writeLine(out, response, "");
 
-        BlockingQueue<CompletedBooking> completions =
-                new LinkedBlockingQueue<>();
+        var completions = new LinkedBlockingQueue<CompletedBooking>();
 
         for (int i = 0; i < stubs.size(); i++) {
-            WorkflowStub stub = stubs.get(i);
-            BookingRequest request = requests.get(i);
-            Thread.startVirtualThread(() -> {
-                stub.getResult(String.class);
-                completions.add(new CompletedBooking(
-                        stub.getExecution().getWorkflowId(), request));
-            });
+            var stub = stubs.get(i);
+            var request = requests.get(i);
+            stub.getResultAsync(String.class).thenAccept(r ->
+                    completions.add(new CompletedBooking(
+                            stub.getExecution().getWorkflowId(),
+                            request)));
         }
 
         for (int i = 0; i < stubs.size(); i++) {
@@ -250,7 +243,7 @@ class BookingController {
     private WorkflowStub submitBooking(
             BookingRequest request, String idPrefix,
             float fairnessWeight) {
-        String workflowId = idPrefix + request.bookingId();
+        var workflowId = idPrefix + request.bookingId();
 
         var workflow = workflowClient.newWorkflowStub(
                 BookingWorkflow.class,
