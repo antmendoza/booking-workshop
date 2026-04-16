@@ -1,0 +1,44 @@
+{
+  "name": "Temporal x Spring Boot Workshop",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21",
+      "jdkDistro": "tem",
+      "installMaven": "false",
+      "installGradle": "false"
+    },
+    "ghcr.io/devcontainers-extra/features/temporal-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/go-task:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot",
+        "redhat.vscode-yaml",
+        "task.vscode-task"
+      ]
+    }
+  },
+  "forwardPorts": [7233, 8233, 3030, 8080],
+  "portsAttributes": {
+    "7233": {
+      "label": "Temporal gRPC",
+      "onAutoForward": "ignore"
+    },
+    "8233": {
+      "label": "Temporal Web UI",
+      "onAutoForward": "openBrowser"
+    },
+    "3030": {
+      "label": "Spring Boot (metrics)",
+      "onAutoForward": "notify"
+    },
+    "8080": {
+      "label": "Spring Boot (app)",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "echo '>>> Environment ready. Run: task temporal:start'"
+}

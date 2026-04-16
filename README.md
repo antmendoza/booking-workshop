@@ -21,6 +21,21 @@ session.
 - Covers interceptors, auth propagation, testing,
   worker versioning, saga pattern, metrics, and DSL
 
+## GitHub Codespaces
+
+Open this workshop in a ready-to-code
+environment — no local setup required.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/antmendoza/booking-workshop)
+
+The dev container includes Java 21, Temporal CLI,
+and Task. Once the environment is ready, start a
+local Temporal server:
+
+```bash
+task temporal:start
+```
+
 ## Prerequisites
 
 - Java 21
