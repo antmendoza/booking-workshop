@@ -21,6 +21,7 @@ class HelloWorkflowTest {
         var workflow = workflowClient.newWorkflowStub(
                 HelloWorkflow.class,
                 WorkflowOptions.newBuilder()
+                        .setWorkflowId("testing-hello")
                         .setTaskQueue(HelloWorkflow.TASK_QUEUE)
                         .build());
 

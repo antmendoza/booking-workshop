@@ -52,7 +52,7 @@ class BookingController {
 
         List<WorkflowStub> stubs = new ArrayList<>();
         for (BookingRequest request : requests) {
-            stubs.add(submitBooking(request, "booking-", 1.0f));
+            stubs.add(submitBooking(request, "priority-", 1.0f));
         }
 
         LOGGER.info("All {} workflows submitted. Streaming completions...", stubs.size());

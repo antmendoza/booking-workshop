@@ -36,6 +36,7 @@ class HelloWorkflowMockitoTest {
         var workflow = workflowClient.newWorkflowStub(
                 HelloWorkflow.class,
                 WorkflowOptions.newBuilder()
+                        .setWorkflowId("testing-hello-mockito")
                         .setTaskQueue(HelloWorkflow.TASK_QUEUE)
                         .build());
 

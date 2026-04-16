@@ -23,6 +23,7 @@ class HelloWorkflowReplayTest {
         var workflow = workflowClient.newWorkflowStub(
                 HelloWorkflow.class,
                 WorkflowOptions.newBuilder()
+                        .setWorkflowId("testing-hello-replay")
                         .setTaskQueue(HelloWorkflow.TASK_QUEUE)
                         .build());
 
