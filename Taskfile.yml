@@ -23,6 +23,7 @@ tasks:
       - test:use-interceptor-to-handle-auth-failure
       - test:understand-temporal-integration-with-spring-boot
       - test:testing
+      - test:worker-versioning
 
   _test:
     internal: true
@@ -65,6 +66,12 @@ tasks:
     cmds:
       - task: _test
         vars: { SOLUTION: testing }
+
+  test:worker-versioning:
+    desc: Test worker-versioning solution
+    cmds:
+      - task: _test
+        vars: { SOLUTION: worker-versioning }
 
   temporal:start:
     desc: Start a local Temporal dev server

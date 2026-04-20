@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: temporal-worker-versioning
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    workersAutoDiscovery:
+      packages: io.temporal
+
+app:
+  versioning:
+    enabled: ${WORKER_VERSIONING_ENABLED:false}
+    deployment-name: ${TEMPORAL_DEPLOYMENT_NAME:booking-workers}
+    build-id: ${TEMPORAL_BUILD_ID:1.0}

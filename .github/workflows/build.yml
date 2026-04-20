@@ -19,6 +19,7 @@ jobs:
           - testing/solution
           - understand-temporal-integration-with-spring-boot/solution
           - use-interceptor-to-handle-auth-failure/solution
+          - worker-versioning/solution
     steps:
       - uses: actions/checkout@v4
 

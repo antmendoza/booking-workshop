@@ -1,0 +1,4 @@
+app:
+  versioning:
+    enabled: true
+    build-id: "2.0"
