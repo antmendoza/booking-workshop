@@ -8,15 +8,10 @@ server:
 
 spring:
   application:
-    name: temporal-best-practices
+    name: temporal-workflow
 
   # temporal specific configs
   temporal:
     connection:
       target: 127.0.0.1:7233
    # namespace: default
-    workers-auto-discovery:
-      packages:
-        - io.temporal
-    workers:
-      - task-queue: HelloSampleTaskQueue

@@ -12,9 +12,10 @@
     </parent>
 
     <groupId>io.temporal.workshops.springboot</groupId>
-    <artifactId>temporal-best-practices-solution</artifactId>
+    <artifactId>temporal-workflow-exercise</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Temporal x Spring Boot Workshop :: Best Practices :: Solution</name>
+    <name>Temporal x Spring Boot Workshop :: Workflow :: Exercise</name>
+
 
     <properties>
         <java.version>21</java.version>
@@ -27,21 +28,24 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Temporal  -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>io.temporal</groupId>
+            <artifactId>temporal-spring-boot-autoconfigure</artifactId>
+            <version>${temporal.version}</version>
         </dependency>
 
-        <!-- Temporal  -->
         <dependency>
             <groupId>io.temporal</groupId>
             <artifactId>temporal-spring-boot-starter</artifactId>
             <version>${temporal.version}</version>
         </dependency>
+
 
         <!-- Metrics -->
         <dependency>
@@ -53,6 +57,7 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <scope>runtime</scope>
         </dependency>
+
 
         <!-- Test -->
         <dependency>
