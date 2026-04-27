@@ -187,4 +187,33 @@ curl -X POST http://localhost:3030/hello \
     -d '{"firstName":"Xiao","lastName":"Zhan"}'
 Hello, Xiao Zhan!
 ```
- 
+# Step 4
+It is common to want to perform custom configuration of the worker 
+and temporal provides a mechanism to do this.  With spring boot this can be provided
+via the configuration annotation that applies the cusomizations to the 
+auto-created worker.
+
+To add the options in create a class call TemporalOptionsConfig in a app/config package.  
+The [sample springboot application](https://github.com/temporalio/samples-java/blob/main/springboot/src/main/java/io/temporal/samples/springboot/customize/TemporalOptionsConfig.java) has an example of the content for this
+file.  Spring boot will automatically application the configuration to the worker.
+
+As a test to show that this configuration file is being picked up we will simply change the
+"identity" of the worker.  Further configuration may be done in later exercises to apply
+specific configuration.
+
+In the `WorkerOptionsCustomizer` add a line to set the identity.
+
+```aiignore
+...
+    @Bean
+    public WorkerOptionsCustomizer customWorkerOptions() {
+...
+                // Customize the name of the worker.
+                optionsBuilder.setIdentity("HelloWorldAppInstance");
+...
+```
+Then re-run the application, issue the curl command to create a workflow instance then in 
+the Temporal UI inspect the workflow which will allow you to click on the "workers"
+tab and see that the worker with your custom identity has been started.
+
+
