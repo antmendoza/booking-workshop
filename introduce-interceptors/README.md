@@ -215,6 +215,7 @@ Start the application with the `interceptor-metric`
 profile:
 
 ```bash
+cd exercise
 ./mvnw spring-boot:run \
     -Dspring-boot.run.profiles=interceptor-metric
 ```

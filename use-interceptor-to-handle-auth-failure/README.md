@@ -1,10 +1,4 @@
-# [WIP] Using an Interceptor to Handle Auth Failures
-
-When an Activity fails because an auth token has
-expired, the correct response is to refresh the
-token and retry — transparently, without
-polluting workflow business logic with retry
-plumbing.
+# Using an Interceptor to Handle Auth Failures
 
 Temporal's **WorkflowOutboundCallsInterceptor**
 lets you intercept every Activity dispatch inside
@@ -19,8 +13,7 @@ implementation.
 
 In this exercise you will implement the
 catch-and-refresh logic in
-`ActivityAuthOutboundInterceptor`, including a
-guard that prevents an infinite refresh loop.
+`ActivityAuthOutboundInterceptor`.
 
 ## Objective
 
@@ -128,7 +121,7 @@ side-effects such as fetching a fresh token from
 a local cache or secret store.
 
 The stub is declared inside
-`ActivityAuthOutboundInterceptor` with a 10-second
+`ActivityAuthOutboundInterceptor` with a 3-second
 `scheduleToCloseTimeout` and `maxAttempts=1`:
 
 ```java
@@ -136,7 +129,7 @@ private final HelloActivityInterceptor myActivities =
     Workflow.newLocalActivityStub(
         HelloActivityInterceptor.class,
         LocalActivityOptions.newBuilder()
-            .setScheduleToCloseTimeout(Duration.ofSeconds(10))
+            .setScheduleToCloseTimeout(Duration.ofSeconds(3))
             .setRetryOptions(
                 RetryOptions.newBuilder()
                     .setMaximumAttempts(1).build())
@@ -202,7 +195,7 @@ Implement the catch block:
 1. Cast `e.getCause()` to `ApplicationFailure`
    and check its type equals `"TokenExpired"`
 2. Call `myActivities.regenerateAuthToken()` to
-   obtain a fresh token
+   get a fresh token
 3. Store the new token with
    `MDC.put("x-auth-jwt-token", newToken)`
 4. Retry the original activity with
@@ -214,16 +207,16 @@ The completed block should look like this:
 } catch (ActivityFailure e) {
 
         if (((ApplicationFailure) e.getCause()).getType().equals("TokenExpired")) {
-        log.error("Error executing activity doctor: {}", e.getMessage());
+            log.error("Error executing activity: {}", e.getMessage());
 
-        // generate a new token
-        String newToken = myActivities.regenerateAuthToken();
-                        MDC.put("x-auth-jwt-token", newToken);
-        
-        // retry the original activity
-        rActivityOutput = super.executeActivity(input);
+            // generate a new token
+            String newToken = myActivities.regenerateAuthToken();
+                            MDC.put("x-auth-jwt-token", newToken);
+            
+            // retry the original activity
+            rActivityOutput = super.executeActivity(input);
 
-            }
+        }
 }
 
 ```
@@ -239,13 +232,9 @@ sequence executes correctly.
 Run the tests:
 
 ```bash
+cd exercise
 ./mvnw test
 ```
-
-The test environment does not exercise the
-interceptor or MDC propagation, but a passing
-suite confirms the Workflow implementation is
-correct.
 
 ### Step 4 — Run the application
 
@@ -253,6 +242,7 @@ Start the application with the
 `interceptor-localactivity-auth` profile:
 
 ```bash
+cd exercise
 ./mvnw spring-boot:run \
     -Dspring-boot.run.profiles=interceptor-localactivity-auth
 ```

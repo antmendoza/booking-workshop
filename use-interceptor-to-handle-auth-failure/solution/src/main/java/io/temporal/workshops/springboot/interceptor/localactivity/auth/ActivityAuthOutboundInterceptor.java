@@ -21,7 +21,7 @@ public class ActivityAuthOutboundInterceptor extends WorkflowOutboundCallsInterc
     private final HelloActivityInterceptor myActivities = Workflow.newLocalActivityStub(
             HelloActivityInterceptor.class,
             LocalActivityOptions.newBuilder()
-                    .setScheduleToCloseTimeout(Duration.ofSeconds(10))
+                    .setScheduleToCloseTimeout(Duration.ofSeconds(3))
                     .setRetryOptions(
                             RetryOptions.newBuilder()
                                     .setMaximumAttempts(1).build())
@@ -47,7 +47,7 @@ public class ActivityAuthOutboundInterceptor extends WorkflowOutboundCallsInterc
         } catch (ActivityFailure e) {
 
             if (((ApplicationFailure) e.getCause()).getType().equals("TokenExpired")) {
-                log.error("Error executing activity doctor: {}", e.getMessage());
+                log.error("Error executing activity: {}", e.getMessage());
 
                 // generate a new token
                 String newToken = myActivities.regenerateAuthToken();
