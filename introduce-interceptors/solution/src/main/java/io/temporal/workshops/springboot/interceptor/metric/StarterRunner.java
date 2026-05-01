@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(value = "interceptor-metric")
+@Profile(value = {"!test & interceptor-metric"})
 public class StarterRunner implements ApplicationRunner {
 
 
     private static final Logger log = LoggerFactory.getLogger(StarterRunner.class);
-    private static final String TASK_QUEUE = "HelloSampleInterceptor";
+    public static final String TASK_QUEUE = "HelloSampleInterceptor";
 
     private final WorkflowClient workflowClient;
 

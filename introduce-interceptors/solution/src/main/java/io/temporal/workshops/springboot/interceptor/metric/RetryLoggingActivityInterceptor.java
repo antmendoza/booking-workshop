@@ -36,7 +36,8 @@ public class RetryLoggingActivityInterceptor extends ActivityInboundCallsInterce
 
             Scope scope = context.getMetricsScope()
                     .tagged(Map.of(
-                            //heads up, this can create metrics with very high cardinality
+                            // heads up, this can create metrics with very high cardinality
+                            // setting a tag with the workflow run id for demonstration purposes
                             "workflow_run_id", info.getRunId()
                     ));
 

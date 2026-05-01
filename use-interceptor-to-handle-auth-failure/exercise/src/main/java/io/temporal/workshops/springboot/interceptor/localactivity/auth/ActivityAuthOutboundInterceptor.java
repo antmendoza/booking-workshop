@@ -19,7 +19,7 @@ public class ActivityAuthOutboundInterceptor extends WorkflowOutboundCallsInterc
     private final HelloActivityInterceptor myActivities = Workflow.newLocalActivityStub(
             HelloActivityInterceptor.class,
             LocalActivityOptions.newBuilder()
-                    .setScheduleToCloseTimeout(Duration.ofSeconds(10))
+                    .setScheduleToCloseTimeout(Duration.ofSeconds(3))
                     .setRetryOptions(
                             RetryOptions.newBuilder()
                                     .setMaximumAttempts(1).build())

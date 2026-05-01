@@ -1,4 +1,4 @@
-# [WIP] Introducing Interceptors in Temporal
+# Introducing Interceptors in Temporal
 
 Temporal's **WorkerInterceptor** API lets you wrap
 Workflow and Activity execution at the Worker level.
@@ -14,7 +14,7 @@ link invokes the actual Workflow or Activity method.
 
 In this exercise you will implement an Activity
 interceptor that captures retry attempts and emits a
-custom Prometheus counter. You will wire the
+custom counter-metric. You will wire the
 interceptor into the Spring Boot Temporal starter and
 observe the metric live at the Prometheus endpoint.
 
@@ -26,7 +26,6 @@ observe the metric live at the Prometheus endpoint.
 - Emit an `activity_retry` Prometheus counter tagged
   with the Workflow run ID on every fifth retry
   attempt
-- Verify the Workflow still passes the unit tests
 - Run the application with the `interceptor-metric`
   profile and confirm the metric appears at the
   Prometheus endpoint
@@ -103,7 +102,7 @@ scope.counter("activity_retry").inc(attempt);
 > **Note:** Tagging metrics with per-execution values
 > such as `workflow_run_id` creates high-cardinality
 > series. This is fine for demos but should be
-> avoided in production Prometheus deployments.
+> avoided in production deployments.
 
 ### Spring Boot Wiring
 
@@ -176,7 +175,8 @@ public ActivityOutput execute(ActivityInput input) {
     if (attempt % 5 == 0) {
         Scope scope = context.getMetricsScope()
                 .tagged(Map.of(
-                        // heads up: high cardinality in production
+                        // heads up, this can create metrics with very high cardinality
+                        // setting a tag with the workflow run id for demonstration purposes
                         "workflow_run_id", info.getRunId()
                 ));
         scope.counter("activity_retry").inc(attempt);
@@ -198,21 +198,16 @@ import java.util.Map;
 
 ### Step 3 — Verify with the unit tests
 
-The `HelloInterceptorWorkflowTest` class uses
-`TestWorkflowEnvironment` with a mocked Activity to
-verify that the Workflow drives the Activity and
-returns the expected greeting string.
+The `HelloInterceptorWorkflowSpringBootTest` class verify 
+your interceptor logic by asserting the meterRegistry
+contains the expected metrics.
 
 Run the tests:
 
 ```bash
+cd exercise
 ./mvnw test
 ```
-
-The test environment does not exercise the
-interceptor logic directly, but a passing suite
-confirms your code compiles and the Workflow
-mechanics work correctly.
 
 ### Step 4 — Run the application
 
@@ -220,6 +215,7 @@ Start the application with the `interceptor-metric`
 profile:
 
 ```bash
+cd exercise
 ./mvnw spring-boot:run \
     -Dspring-boot.run.profiles=interceptor-metric
 ```

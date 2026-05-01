@@ -13,8 +13,9 @@ public class HelloActivityInterceptorImpl implements HelloActivityInterceptor {
 
     @Override
     public String greet(String name) {
-        if (Activity.getExecutionContext().getInfo().getAttempt() < 6) {
-            throw new RuntimeException("Simulating a transient failure");
+        int attempt = Activity.getExecutionContext().getInfo().getAttempt();
+        if (attempt < 6) {
+            throw new RuntimeException("Attempt ["+attempt+"], Simulating a transient failure");
         }
         return "Hello, " + name + "!";
     }

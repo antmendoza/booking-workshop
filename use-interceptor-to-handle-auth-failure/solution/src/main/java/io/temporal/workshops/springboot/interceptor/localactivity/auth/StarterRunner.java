@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(value = "interceptor-localactivity-auth")
+@Profile(value = "interceptor-localactivity-auth & !test")
 public class StarterRunner implements ApplicationRunner {
 
 
     private static final Logger log = LoggerFactory.getLogger(StarterRunner.class);
-    private static final String TASK_QUEUE = "HelloInterceptorLocalactivityAuth";
+    public static final String TASK_QUEUE = "HelloInterceptorLocalactivityAuth";
 
     private final WorkflowClient workflowClient;
 
