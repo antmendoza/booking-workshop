@@ -106,6 +106,7 @@ Install [Task](https://taskfile.dev), then:
 | 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md)                                           | Saga pattern with compensation         |
 | 10 | [understanding-metrics](understanding-metrics/exercise/README.md)                                                       | Understanding metrics                  |
 | 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md)                                               | Dynamic workflows and DSL              |
+| 12 | [worker-tuning](worker-tuning/README.md)                                                                                | Worker tuning and configuration        |
 
 ## License
 
