@@ -9,7 +9,7 @@ See [README.md](README.md) for full documentation.
 
 - Java 21
 - Spring Boot 4.0
-- Temporal Java SDK 1.34
+- Temporal Java SDK 1.35
 - Maven (wrapper per exercise)
 
 ## Build & run
