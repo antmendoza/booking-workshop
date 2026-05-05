@@ -1,4 +1,10 @@
-app:
-  versioning:
-    enabled: true
-    build-id: "1.0"
+# spring:
+#   temporal:
+#     workers:
+#       -  task-queue: HelloSampleTaskQueue
+#          deployment-properties:
+#            deployment-version: ${TEMPORAL_DEPLOYMENT_NAME:hello-workers}.${TEMPORAL_BUILD_ID:1.0}
+#            use-versioning: true
+#            default-versioning-behaviour: "PINNED"
+
+

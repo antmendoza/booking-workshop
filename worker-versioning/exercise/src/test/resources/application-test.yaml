@@ -2,7 +2,3 @@ spring:
   temporal:
     test-server:
       enabled: true
-
-app:
-  versioning:
-    enabled: false
