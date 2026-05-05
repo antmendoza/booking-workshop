@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: temporal-worker-tuning
+
+  temporal:
+    connection:
+      target: ${TEMPORAL_ADDRESS:localhost:7233}
+    workersAutoDiscovery:
+      packages: io.temporal.workshops.springboot.workertuning.worker
+
+    workers:
+      - task-queue: HelloWorkerTaskQueue
+        capacity:
+          max-concurrent-workflow-task-executors: 200 # default 200
+          max-concurrent-activity-executors: 200 # default 200 (change to 800 to increase activity concurrency)
+
+
+          # Workflow poller autoscaling
+          workflow-task-pollers-configuration:
+            poller-behavior-autoscaling:
+              min-concurrent-task-pollers: 1
+              max-concurrent-task-pollers: 200
+              initial-concurrent-task-pollers: 5
+
+          # Activity poller autoscaling
+          activity-task-pollers-configuration:
+            poller-behavior-autoscaling:
+              min-concurrent-task-pollers: 1
+              max-concurrent-task-pollers: 200
+              initial-concurrent-task-pollers: 5
+
+
+    workflow-cache:
+      usingVirtualWorkflowThreads: true
+
+
+management:
+  otlp:
+    metrics:
+      export:
+        enabled: true
+        url: http://localhost:4318/v1/metrics
+        step: 10s
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+

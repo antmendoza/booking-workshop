@@ -24,6 +24,7 @@ tasks:
       - test:understand-temporal-integration-with-spring-boot
       - test:testing
       - test:worker-versioning
+      - test:worker-tuning
 
   _test:
     internal: true
@@ -72,6 +73,12 @@ tasks:
     cmds:
       - task: _test
         vars: { SOLUTION: worker-versioning }
+
+  test:worker-tuning:
+    desc: Test worker-tuning solution
+    cmds:
+      - task: _test
+        vars: { SOLUTION: worker-tuning }
 
   temporal:start:
     desc: Start a local Temporal dev server
