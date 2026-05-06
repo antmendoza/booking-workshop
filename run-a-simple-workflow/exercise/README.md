@@ -15,6 +15,8 @@ In order to ensure there are workers running and to execute a test workflow use 
 Using this profile spring auto discovers the workflows and activities to register against the worker and uses the StarterRunner to automatically create a new workflow instance.
 
 Ensure the app starts up cleanly and observe the workflow execution in the Temporal UI.
+The workflow is very simple at this point, representing thw workflow equivalent of "Hello World".  A workflow
+runs, calls a single activity to provide a greeting and completes returning the greeting to the client.
 
 
 

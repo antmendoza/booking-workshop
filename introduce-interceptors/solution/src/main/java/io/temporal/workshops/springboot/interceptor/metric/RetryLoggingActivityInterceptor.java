@@ -41,7 +41,7 @@ public class RetryLoggingActivityInterceptor extends ActivityInboundCallsInterce
                             "workflow_run_id", info.getRunId()
                     ));
 
-            scope.counter("activity_retry").inc(attempt);
+            scope.counter("activity_retry").inc(5);
 
         }
 

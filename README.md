@@ -62,7 +62,8 @@ temporal server start-dev \
 ```
 
 The server listens on `127.0.0.1:7233` with a
-web UI at `http://localhost:8233`.
+web UI at `http://localhost:8233`.  Ensure that you an access the web UI and see 
+the default namespace.  Initially there will be no workflows.
 
 ## Getting started
 

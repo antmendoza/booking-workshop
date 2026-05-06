@@ -72,6 +72,9 @@ on that Worker. It exposes three entry points:
 Return `next` unchanged from any method to skip
 interception for that call type.
 
+These overrides are in the `RetryLoiggingWorkerIncerceptor`class of the exercise, providing the hook points
+that can be used to wrap Workflow, Activity and Nexus calls.
+
 ### ActivityInboundCallsInterceptor
 
 `ActivityInboundCallsInterceptorBase` is a
@@ -85,6 +88,9 @@ override only the methods you care about:
 - `execute(ActivityInput input)` — wraps the actual
   Activity method call; always call
   `super.execute(input)` to continue the chain
+
+These methods are included in the `RetryLoggingActivityInterceptor` providing a point to add 
+custom logic that can be called on inbound activity calls.
 
 ### Metrics Scope
 
@@ -106,8 +112,8 @@ scope.counter("activity_retry").inc(attempt);
 
 ### Spring Boot Wiring
 
-The Temporal Spring Boot starter picks up any Spring
-bean that implements `WorkerInterceptor` and
+The Temporal Spring Boot starter picks up **any Spring
+bean that implements `WorkerInterceptor`** and
 registers it on every Worker automatically — no
 manual `Worker` configuration is needed.
 
@@ -179,15 +185,14 @@ public ActivityOutput execute(ActivityInput input) {
                         // setting a tag with the workflow run id for demonstration purposes
                         "workflow_run_id", info.getRunId()
                 ));
-        scope.counter("activity_retry").inc(attempt);
+        scope.counter("activity_retry").inc(5);
     }
 
     return super.execute(input);
 }
 ```
 
-The required imports are already declared at the top
-of the file:
+The required imports are shown below:
 
 ```java
 import com.uber.m3.tally.Scope;
@@ -246,6 +251,13 @@ A value of `5.0` confirms that the interceptor
 emitted the counter on the fifth attempt — the first
 multiple of 5 — just before the Activity finally
 succeeded.
+
+
+# Step 6 (Optional) - change the activity logic to counnt above 5.
+As an optional extension can you change the actiivty logic to retry 16 or more times and 
+observe the metric being incremented several times.  
+It may be useful to change the activity retry policy to add a delay between retries so 
+it is possible to observe the counter metric being incremented.
 
 ## Key Takeaways
 
