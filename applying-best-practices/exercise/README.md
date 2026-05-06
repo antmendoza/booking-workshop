@@ -10,7 +10,7 @@ be significantly more complex and by using a standard scaffolding approach
 will make either re-factoring to make code re-usable by other teams or to 
 improve modularity for maintanence.
 
-Having a structure:
+Having a structure that is similar to the below example can help this modularisation:
 
 `/api` - A location for the definition of API endpoints.  (Particularly REST endpoints that clients can call to start, signal, query or update a workflow.)
 
@@ -51,10 +51,11 @@ app
 --> workers
 ```
 
-Currently nothing needed in the controllers package will add for managed testing later in this exercise.
+Currently nothing needed in the controllers package later in this exercise we will create a controller for managed testing.
+
 Move the activities from the hello package into integrations.
-Move the Application file under workers.
-refactor the workflow from /io/temporal/workflow to /io/temporal/app/workflows
+
+Refactor the workflow from /io/temporal/workflow to /io/temporal/app/workflows
 
 
 Run the app to ensure that all the refactoring has worked.  (I used the IDE to refactor which normally does a good job of moving packages about but you may have to look at the imports to correct.)
@@ -114,7 +115,7 @@ Change the workflow and activity interfaces and implementations to use the new N
 Re-run the application and tests.
 
 # Step 3
-Add a REST endpoint so that the workflow can easily be started.  Do do this create the REST controller in the api/controllers directory.
+Add a REST endpoint so that the workflow can easily be started.  To do this create the REST controller in the api/controllers directory.
 
 ```aiignore
 package io.temporal.app.api.controllers;
@@ -195,7 +196,7 @@ auto-created worker.
 
 To add the options in create a class call TemporalOptionsConfig in a app/config package.  
 The [sample springboot application](https://github.com/temporalio/samples-java/blob/main/springboot/src/main/java/io/temporal/samples/springboot/customize/TemporalOptionsConfig.java) has an example of the content for this
-file.  Spring boot will automatically application the configuration to the worker.
+file.  Spring boot will automatically apply the configuration to the worker.
 
 As a test to show that this configuration file is being picked up we will simply change the
 "identity" of the worker.  Further configuration may be done in later exercises to apply
@@ -212,7 +213,7 @@ In the `WorkerOptionsCustomizer` add a line to set the identity.
                 optionsBuilder.setIdentity("HelloWorldAppInstance");
 ...
 ```
-Then re-run the application, issue the curl command to create a workflow instance then in 
+Then re-run the application.  Issue the curl command to create a workflow instance then in 
 the Temporal UI inspect the workflow which will allow you to click on the "workers"
 tab and see that the worker with your custom identity has been started.
 
