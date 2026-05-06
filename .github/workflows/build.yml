@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         solution:
+          - run-a-simple-workflow/exercise
           - applying-best-practices/solution
           - introduce-interceptors/solution
           - priority-and-fairness/solution
