@@ -14,13 +14,20 @@ jobs:
       matrix:
         solution:
           - run-a-simple-workflow/exercise
-          - applying-best-practices/solution
+          - introduce-interceptors/exercise          
           - introduce-interceptors/solution
-          - priority-and-fairness/solution
-          - testing/solution
+          - use-interceptor-to-handle-auth-failure/exercise
+          - use-interceptor-to-handle-auth-failure/solution          
+          - applying-best-practices/exercise
+          - applying-best-practices/solution
+          - understand-temporal-integration-with-spring-boot/exercise          
           - understand-temporal-integration-with-spring-boot/solution
-          - use-interceptor-to-handle-auth-failure/solution
-          - worker-versioning/solution
+          - testing/exercise          
+          - testing/solution          
+          - worker-versioning/exercise          
+          - worker-versioning/solution   
+          - priority-and-fairness/exercise          
+          - priority-and-fairness/solution
           - worker-tuning/demo
     steps:
       - uses: actions/checkout@v4
