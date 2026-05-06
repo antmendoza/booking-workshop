@@ -18,7 +18,7 @@ catch-and-refresh logic in
 ## Objective
 
 - Understand how `ContextPropagator` carries
-  MDC keys across Workflow and Activity boundaries
+  Mapped Diagnostic Context (MDC) keys across Workflow and Activity boundaries
 - Implement the `catch (ActivityFailure e)` block
   in `ActivityAuthOutboundInterceptor.executeActivity()`
   to detect a `TokenExpired` error, call
