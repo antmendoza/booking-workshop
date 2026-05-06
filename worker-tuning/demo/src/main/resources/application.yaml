@@ -12,7 +12,7 @@ spring:
       - task-queue: HelloWorkerTaskQueue
         capacity:
           max-concurrent-workflow-task-executors: 200 # default 200
-          max-concurrent-activity-executors: 200 # default 200 (change to 800 to increase activity concurrency)
+          max-concurrent-activity-executors: 800 # default 200 (change to 800 to increase activity concurrency)
 
 
           # Workflow poller autoscaling

@@ -68,8 +68,6 @@ curl -s http://localhost:3030/actuator/prometheus
   and fair share processing
 - **saga-pattern-implementation** — scopes
   and compensation steps
-- **understanding-metrics** — Temporal and
-  application metrics
 - **dynamic-workflows-and-dsl** — dynamic
   workflow construction from DSL definitions
 

@@ -104,9 +104,8 @@ Install [Task](https://taskfile.dev), then:
 | 7  | [worker-versioning](worker-versioning/README.md)                                                                        | Worker versioning and migration        |
 | 8  | [priority-and-fairness](priority-and-fairness/README.md)                                                                | Priority and fair share processing     |
 | 9  | [saga-pattern-implementation](saga-pattern-implementation/exercise/README.md)                                           | Saga pattern with compensation         |
-| 10 | [understanding-metrics](understanding-metrics/exercise/README.md)                                                       | Understanding metrics                  |
-| 11 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md)                                               | Dynamic workflows and DSL              |
-| 12 | [worker-tuning](worker-tuning/README.md)                                                                                | Worker tuning and configuration        |
+| 10 | [dynamic-workflows-and-dsl](dynamic-workflows-and-dsl/exercise/README.md)                                               | Dynamic workflows and DSL              |
+| 11 | [worker-tuning](worker-tuning/README.md)                                                                                | Worker tuning and configuration        |
 
 ## License
 
