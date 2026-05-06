@@ -118,6 +118,33 @@ appropriate `ActivityOptions` (set a
 `startToCloseTimeout`), then delegate the work
 to the activity.
 
+Sample logic to add to the `HelloWorkflowImpl` class:
+
+```aiignore
+    // Logger that is workflow replay aware.  (Will not create output on replay)
+    private Logger LOGGER = Workflow.getLogger(HelloWorkflowImpl.class);
+    // Proxy that schedules activity tasks on the Temporal server
+    private final HelloActivity helloActivity = Workflow.newActivityStub(
+            HelloActivity.class,
+            ActivityOptions.newBuilder()
+                    .setStartToCloseTimeout(Duration.ofSeconds(10))
+                    .build()
+    );
+
+    @Override
+    public String sayHello(String name) {
+        LOGGER.info("Saying hello: {}", name);
+        
+        // Activity call (Next step creates thet activity implementation.)
+        // return helloActivity.greet(name);
+        return "Hello " + name; // Allow workflow to complete withtout activity.
+    }
+
+```
+
+At this point you can jump ahead to step 6 to run and test the workflow.  Then return
+to Step 4 to implement the activity.
+
 ### Step 4 — Explore the greeting service
 
 Open `GreetingService.java` in the `hello`
@@ -169,6 +196,28 @@ just as you would in a regular service.
 Activities run as normal Java code (no replay),
 so a standard `LoggerFactory.getLogger()` is
 fine here.
+
+Example implementation logic for activity.
+```aiignore
+ private static final Logger LOGGER =
+            LoggerFactory.getLogger(HelloActivityImpl.class);
+
+    private final GreetingService greetingService;
+
+    HelloActivityImpl(GreetingService greetingService) {
+        this.greetingService = greetingService;
+    }
+    @Override
+    public String greet(String name) {
+        LOGGER.info("Greeting: {}", name);
+        return greetingService.buildGreeting(name);
+    }
+```
+Once done change the workflow implementation (`HelloWorkflowimpl`) to use the activity class.
+i.e. 
+```aiignore
+return helloActivity.greet(name);
+```
 
 ### Step 6 — Run and test
 
