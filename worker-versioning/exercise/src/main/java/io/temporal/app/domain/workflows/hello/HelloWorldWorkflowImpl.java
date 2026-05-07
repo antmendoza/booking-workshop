@@ -1,6 +1,7 @@
 package io.temporal.app.domain.workflows.hello;
 
 import io.temporal.activity.ActivityOptions;
+import io.temporal.activity.LocalActivityOptions;
 import io.temporal.app.domain.integrations.HelloActivity;
 import io.temporal.app.domain.messages.Name;
 import io.temporal.spring.boot.WorkflowImpl;
@@ -22,15 +23,24 @@ public class HelloWorldWorkflowImpl implements HelloWorldWorkflow {
                     .build()
     );
 
+    private final HelloActivity helloLocalActivity = Workflow.newLocalActivityStub(
+            HelloActivity.class,
+            LocalActivityOptions.newBuilder()
+                    .setStartToCloseTimeout(Duration.ofSeconds(3))
+                    .build()
+    );
+
     @Override
     // TODO: Add @WorkflowVersioningBehavior(VersioningBehavior.PINNED) here.
     //       Import io.temporal.common.VersioningBehavior
     //       and io.temporal.workflow.WorkflowVersioningBehavior.
     public String sayHello(Name name) {
-        var buildId = Workflow.getInfo().getCurrentBuildId().orElse("dev");
+        var buildId = "";
+
         String result = null;
         for (var i = 0; i < DEFAULT_ITERATIONS; i++) {
             var iteration = i + 1;
+            buildId = helloLocalActivity.getWorkerVersion();
             var summary = "Iteration " + iteration + "/" + DEFAULT_ITERATIONS
                     + " (v" + buildId + ")";
             var stub = Workflow.newActivityStub(

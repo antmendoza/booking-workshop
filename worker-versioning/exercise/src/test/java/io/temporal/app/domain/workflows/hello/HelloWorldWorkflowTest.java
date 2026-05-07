@@ -28,9 +28,17 @@ class HelloWorldWorkflowTest {
         worker.registerWorkflowImplementationTypes(
                 HelloWorldWorkflowImpl.class);
         worker.registerActivitiesImplementations(
-                (HelloActivity) name ->
-                        "Hello " + name.getName() + " from mocked activity");
+                new HelloActivity() {
+                    @Override
+                    public String greet(Name name) {
+                        return "Hello " + name.getName() + " from mocked activity";
+                    }
 
+                    @Override
+                    public String getWorkerVersion() {
+                        return "1.0-test";
+                    }
+                });
         testEnv.start();
     }
 

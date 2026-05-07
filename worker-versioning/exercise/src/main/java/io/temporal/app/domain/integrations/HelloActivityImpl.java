@@ -17,13 +17,19 @@ public class HelloActivityImpl implements HelloActivity {
     private final String buildId;
 
     HelloActivityImpl(
-            @Value("${app.versioning.build-id:1.0}") String buildId) {
+            @Value("${spring.temporal.workers[0].deployment-properties.deployment-version:-}") String buildId) {
         this.buildId = buildId;
     }
 
     @Override
     public String greet(Name name) {
         log.info("Greeting: {} (build={})", name, buildId);
-        return "Hello, " + name.getName() + "! (served by v" + buildId + ")";
+        return "Hello, " + name.getName() + "! (served by " + buildId + ")";
+    }
+
+    @Override
+    public String getWorkerVersion()
+    {
+        return buildId;
     }
 }

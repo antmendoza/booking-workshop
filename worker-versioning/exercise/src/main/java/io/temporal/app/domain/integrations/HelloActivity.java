@@ -9,4 +9,7 @@ public interface HelloActivity {
 
     @ActivityMethod
     String greet(Name name);
+
+    @ActivityMethod
+    String getWorkerVersion();
 }
