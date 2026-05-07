@@ -107,14 +107,14 @@ curl -s -X POST http://localhost:3030/hello \
     -d '{"firstName":"Xiao","lastName":"Zhan"}'
 ```
 
-Expected: `Hello, Xiao Zhan! (served by v1.0)`
+Expected: `Hello, Xiao Zhan! (served by -)`
 
 If you then look at the Temporal UI you will see the response came from an update command and then the workflow 
 is still running to iterate round the same activity multiple times.  It can run in the background while you 
 move on to make code changes to implement versioning.
 
 
-### Step 2 — Implement the versioning customizer
+### Step 2 — Implement versioning 
 
 
 Open `HelloWorldWorkflowImpl.java`. Add the annotation to the
@@ -342,10 +342,9 @@ Observe that the next activity to run will be routed to the v2 worker.
 ## Key Takeaways
 
 1. Workers opt into versioning via `WorkerDeploymentOptions`
-   with `useVersioning=true`. In Spring Boot this is done with
-   a `TemporalOptionsCustomizer<WorkerOptions.Builder>` bean.
-2. Every Workflow type registered on a versioned Worker must
-   declare its versioning behavior with
+   with `useVersioning=true`. In Spring Boot this is done with configuration.
+2. Workflow type registered on a versioned Worker can declare
+   its versioning behavior with
    `@WorkflowVersioningBehavior(...)`.
 3. `PINNED` executions complete on their original Deployment
    Version — no code patching is needed for short-lived

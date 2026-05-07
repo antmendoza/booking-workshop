@@ -42,7 +42,7 @@ public class HelloWorldWorkflowImpl implements HelloWorldWorkflow {
             var iteration = i + 1;
             buildId = helloLocalActivity.getWorkerVersion();
             var summary = "Iteration " + iteration + "/" + DEFAULT_ITERATIONS
-                    + " (v" + buildId + ")";
+                    + " (" + buildId + ")";
             var stub = Workflow.newActivityStub(
                     HelloActivity.class,
                     ActivityOptions.newBuilder()

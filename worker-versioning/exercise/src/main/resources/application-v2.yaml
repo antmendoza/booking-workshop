@@ -1,3 +1,6 @@
+server:
+  port: 3031
+
 # spring:
 #   temporal:
 #     workers:
