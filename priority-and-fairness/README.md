@@ -182,6 +182,29 @@ endpoints that you will use in later steps:
   with Luxury Resort at weight 3.0 and the
   other two hotels at weight 1.0
 
+The application can be run prior to including priority/fairness, simply
+start the application from the exercises directory:
+```bash
+./mvnw spring-boot:run
+```
+Then curl the endpoint to submit multiple workflows, this endpoint
+will stream back the workflows completion results.
+```bash
+curl -s -X POST http://localhost:8080/bookings/start \
+    -H "Content-Type: application/json" \
+    -d '{}'
+```
+These results are not processed in a specific order, approximate FIFO.
+By looking in the Temporal UI and inspecting a few of these workflows you can see activities
+with long schedule to start times showing that the throttling to 1 
+executor is impacting the processing times.
+
+Curl the endpoint again and while the workflows are being processed you can look at the 
+task queue backlog using the temporal cli.
+```bash
+temporal task-queue describe -t BookingTaskQueue
+```
+
 ### Step 2 — Add priority to the service
 
 Open `BookingService.java`. The
