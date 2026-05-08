@@ -291,18 +291,13 @@ at step 3. All tests should pass.
 1. The Saga pattern coordinates distributed
    transactions through compensating actions
    rather than ACID rollbacks.
-2. Register a compensation **after** each
-   successful activity — never before.
-3. `setParallelCompensation(false)` runs
+2. `setParallelCompensation(false)` runs
    compensations one at a time in strict
    reverse order.
-4. Set `setMaximumAttempts(1)` on activity
-   options to propagate failures immediately
-   when building compensation logic.
-5. Compensation activities are durable —
+3. Compensation activities are durable —
    Temporal retries them if the worker fails
    mid-compensation.
-6. The `catch (ActivityFailure e)` block is the
+4. The `catch (ActivityFailure e)` block is the
    only place `saga.compensate()` should be
    called; always re-throw so the workflow fails
    visibly.
