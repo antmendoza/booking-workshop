@@ -1,5 +1,6 @@
 package io.temporal.app.domain.integrations;
 
+import io.temporal.app.domain.integrations.exceptions.FirstNameCheckException;
 import io.temporal.app.domain.messages.Name;
 import io.temporal.spring.boot.ActivityImpl;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ public class GreetingActivityImpl implements GreetingActivity {
     public String greet1(Name name) {
         log.info("Greet1: greeting {}", name.getName());
         if ("Fail-1".equals(name.getFirstName())) {
-            throw new RuntimeException("Greet1 simulated failure for " + name.getName());
+            throw new FirstNameCheckException("Greet1 simulated failure for " + name.getName());
         }
         return "Hello " + name.getFirstName() + " " + name.getLastName() + "-1";
     }
@@ -25,7 +26,7 @@ public class GreetingActivityImpl implements GreetingActivity {
     public String greet2(Name name) {
         log.info("Greet2: greeting {}", name.getName());
         if ("Fail-2".equals(name.getFirstName())) {
-            throw new RuntimeException("Greet2 simulated failure for " + name.getName());
+            throw new FirstNameCheckException("Greet2 simulated failure for " + name.getName());
         }
         return "Hello " + name.getFirstName() + " " + name.getLastName() + "-2";
     }
@@ -34,7 +35,7 @@ public class GreetingActivityImpl implements GreetingActivity {
     public String greet3(Name name) {
         log.info("Greet3: greeting {}", name.getName());
         if ("Fail-3".equals(name.getFirstName())) {
-            throw new RuntimeException("Greet3 simulated failure for " + name.getName());
+            throw new FirstNameCheckException("Greet3 simulated failure for " + name.getName());
         }
         return "Hello " + name.getFirstName() + " " + name.getLastName() + "-3";
     }

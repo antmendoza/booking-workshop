@@ -2,6 +2,7 @@ package io.temporal.app.domain.workflows.greeting;
 
 import io.temporal.activity.ActivityOptions;
 import io.temporal.app.domain.integrations.GreetingActivity;
+import io.temporal.app.domain.integrations.exceptions.FirstNameCheckException;
 import io.temporal.app.domain.messages.Name;
 import io.temporal.common.RetryOptions;
 import io.temporal.spring.boot.WorkflowImpl;
@@ -14,7 +15,9 @@ public class GreetingWorkflowImpl implements GreetingWorkflow {
 
     private final ActivityOptions activityOptions = ActivityOptions.newBuilder()
             .setStartToCloseTimeout(Duration.ofSeconds(10))
-            .setRetryOptions(RetryOptions.newBuilder().setMaximumAttempts(1).build())
+            .setRetryOptions(RetryOptions.newBuilder()
+                    .setDoNotRetry(FirstNameCheckException.class.getName())
+                    .build())
             .build();
 
     private final GreetingActivity greetingActivity =

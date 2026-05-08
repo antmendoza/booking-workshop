@@ -1,6 +1,7 @@
 package io.temporal.app.domain.workflows.greeting;
 
 import io.temporal.app.domain.integrations.GreetingActivity;
+import io.temporal.app.domain.integrations.exceptions.FirstNameCheckException;
 import io.temporal.app.domain.messages.Name;
 import io.temporal.client.WorkflowClient;
 import io.temporal.client.WorkflowFailedException;
@@ -40,21 +41,21 @@ class GreetingWorkflowTest {
             @Override
             public String greet1(Name name) {
                 if ("Fail-1".equals(name.getFirstName())) {
-                    throw new RuntimeException("Greet1 simulated failure");
+                    throw new FirstNameCheckException("Greet1 simulated failure");
                 }
                 return "Hello " + name.getFirstName() + " " + name.getLastName() + "-1";
             }
             @Override
             public String greet2(Name name) {
                 if ("Fail-2".equals(name.getFirstName())) {
-                    throw new RuntimeException("Greet2 simulated failure");
+                    throw new FirstNameCheckException("Greet2 simulated failure");
                 }
                 return "Hello " + name.getFirstName() + " " + name.getLastName() + "-2";
             }
             @Override
             public String greet3(Name name) {
                 if ("Fail-3".equals(name.getFirstName())) {
-                    throw new RuntimeException("Greet3 simulated failure");
+                    throw new FirstNameCheckException("Greet3 simulated failure");
                 }
                 return "Hello " + name.getFirstName() + " " + name.getLastName() + "-3";
             }

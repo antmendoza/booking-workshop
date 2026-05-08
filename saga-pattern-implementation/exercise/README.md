@@ -111,13 +111,23 @@ Note a few things:
   activities in series but has no error
   handling — if `greet2` fails, `greet1`'s
   side-effects are never undone
+  
+  The workflow will now add "-N" onto the last name for each 
+  successful step run.  Meaning at the end of a successful run the 
+  last name ends up with -1-2-3 appended to it in the workflow result.
+  
+  If the first name is "Fail-1" then the first activity will throw 
+  a custom exception that is non-retryable and will cause the workflow
+  to fail as there is no error handling logic   
+  built into the workflow.  Similarly 
+  a name of "Fail-2" and "Fail-3" will result in activities 2 and 3 failing.
 - The `compensateN` implementations simply log
   the undo — in a real system these would
   reverse database writes, release
   reservations, etc.
 
-Start the application and trigger a failure to
-see the problem first:
+Start the application and trigger some workflows include some with a first name of "Fail-N" where N is 1,2 or 3
+This shows the workflow with all three steps succeeding and some failing at different points in the workflow.
 
 ```bash
 ./mvnw spring-boot:run
@@ -126,55 +136,14 @@ see the problem first:
 ```bash
 curl -s -X POST http://localhost:3030/greet \
     -H "Content-Type: application/json" \
-    -d '{"firstName":"Fail-2","lastName":"Forbes"}'
+    -d '{"firstName":"Xaio","lastName":"Zhan"}'
 ```
+Repeat the curl with firstName of "Fail-1", "Fail-2" and "Fail-3".
 
-By default Temporal retries failing activities
-indefinitely. The workflow will keep retrying
-`greet2` forever. You can observe this in the
-Temporal UI (`http://localhost:8233`).
 
-### Step 2 — Disable retries on the activity options
+### Step 2 — Create a Saga object
 
-Before adding the Saga, configure the
-`ActivityOptions` to stop retrying on failure so
-the `catch` block can fire immediately. Without
-this, Temporal retries the failing activity
-until the workflow timeout — the saga
-compensation never runs.
-
-In `GreetingWorkflowImpl`, add `setRetryOptions`
-to the existing `ActivityOptions` builder:
-
-```java
-import io.temporal.common.RetryOptions;
-
-private final ActivityOptions activityOptions =
-        ActivityOptions.newBuilder()
-                .setStartToCloseTimeout(
-                        Duration.ofSeconds(10))
-                .setRetryOptions(
-                        RetryOptions.newBuilder()
-                                .setMaximumAttempts(1)
-                                .build())
-                .build();
-```
-
-`setMaximumAttempts(1)` means one attempt, no
-retries. When the activity fails, the exception
-propagates immediately as an `ActivityFailure`,
-which the `catch` block can intercept.
-
-> **Note:** In production you would tune
-> `maximumAttempts` based on the idempotency and
-> retry-safety of each activity, not set it to 1
-> globally. This setting is kept low here so the
-> failure-and-compensate path is clearly visible
-> during the exercise.
-
-### Step 3 — Create a Saga object
-
-At the top of `sayHello`, create a `Saga` with
+At the top of `sayHello` in the `GreetingWorkflowImpl` class, create a `Saga` with
 sequential compensation so compensations run in
 strict reverse order:
 
@@ -194,47 +163,46 @@ registration order — `compensate2` before
 compensations are independent and safe to run
 concurrently.
 
-### Step 4 — Register compensations after each successful step
+### Step 3 — Register compensations after each successful step
 
 Wrap the three activity calls in a `try` block.
-After each successful call, register its
-compensation:
+Before the activity call, register its compensation.   It is done before the
+activity call to ensure the compensation is done even in the scenario where 
+the activity has been cancelled before it completes in the SDK but after the 
+actual action has taken place.  A compensation should be idempotent and handle
+the scenario where the original activity has not happened.:
 
 ```java
 try {
+    saga.addCompensation(
+        greetingActivity::compensate1, name);
     String result1 =
             greetingActivity.greet1(name);
-    saga.addCompensation(
-            greetingActivity::compensate1, name);
+
 
     Name name2 = new Name();
     name2.setFirstName(name.getFirstName());
     name2.setLastName(name.getLastName() + "-1");
+    saga.addCompensation(
+        greetingActivity::compensate2, name2);
     String result2 =
             greetingActivity.greet2(name2);
-    saga.addCompensation(
-            greetingActivity::compensate2, name2);
 
     Name name3 = new Name();
     name3.setFirstName(name.getFirstName());
     name3.setLastName(
             name2.getLastName() + "-2");
+    saga.addCompensation(
+        greetingActivity::compensate3, name3);
     return greetingActivity.greet3(name3);
 
 } catch (ActivityFailure e) {
-    // Step 5 goes here
+    // Step 4 goes here
     throw e;
 }
 ```
 
-The ordering rule: register a compensation
-**only after the activity succeeds**. If
-`greet1` fails, no compensation is registered
-yet, so none runs. If `greet2` fails, only
-`greet1`'s compensation is registered, so only
-`compensate1` runs.
-
-### Step 5 — Compensate on failure
+### Step 4 — Compensate on failure
 
 Inside the `catch (ActivityFailure e)` block,
 call `saga.compensate()`:
@@ -251,50 +219,8 @@ compensation in reverse order. Re-throwing the
 exception ensures the workflow fails visibly in
 the Temporal UI.
 
-The full method should now look like this:
 
-```java
-import io.temporal.failure.ActivityFailure;
-
-@Override
-public String sayHello(Name name) {
-    Saga saga = new Saga(
-            new Saga.Options.Builder()
-                    .setParallelCompensation(false)
-                    .build());
-    try {
-        String result1 =
-                greetingActivity.greet1(name);
-        saga.addCompensation(
-                greetingActivity::compensate1,
-                name);
-
-        Name name2 = new Name();
-        name2.setFirstName(
-                name.getFirstName());
-        name2.setLastName(
-                name.getLastName() + "-1");
-        String result2 =
-                greetingActivity.greet2(name2);
-        saga.addCompensation(
-                greetingActivity::compensate2,
-                name2);
-
-        Name name3 = new Name();
-        name3.setFirstName(
-                name.getFirstName());
-        name3.setLastName(
-                name2.getLastName() + "-2");
-        return greetingActivity.greet3(name3);
-
-    } catch (ActivityFailure e) {
-        saga.compensate();
-        throw e;
-    }
-}
-```
-
-### Step 6 — Run and observe compensation
+### Step 5 — Run and observe compensation
 
 Start the application:
 
@@ -350,7 +276,7 @@ Compare the compensation order in each case:
 | `greet2`      | greet1          | compensate1                   |
 | `greet3`      | greet1, greet2  | compensate2, compensate1      |
 
-### Step 7 — Run the tests
+### Step 6 — Run the tests
 
 ```bash
 ./mvnw test
